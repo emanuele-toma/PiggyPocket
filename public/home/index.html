@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/mdb.min.css">
+    <script src="/js/mdb.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>PiggyPocket - Home</title>
+</head>
+
+<body>
+    <div id="app">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <!-- Container wrapper -->
+            <div class="container-fluid">
+                <!-- Toggle button -->
+                <button @click="collapseClosed = !collapseClosed" class="navbar-toggler" type="button"
+                    data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Collapsible wrapper -->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Navbar brand -->
+                    <a class="navbar-brand mt-2 mt-lg-0" href="#">
+                        <img class="me-2" src="/assets/favicon.png" height="30" alt="Logo" loading="lazy" />
+                        PiggyPocket
+                    </a>
+                    <!-- Left links -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/home/">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/home/transactions">Transazioni</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/home/overview">Riepilogo mensile</a>
+                        </li>
+                    </ul>
+                    <!-- Left links -->
+                </div>
+                <!-- Collapsible wrapper -->
+
+                <!-- Right elements -->
+                <div class="d-flex align-items-center" v-if="collapseClosed">
+                    <!-- Avatar -->
+                    <div class="dropdown">
+                        <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
+                            id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown"
+                            aria-expanded="false">
+                            <img :src="user.picture" class="rounded-circle" height="30" alt="Icona profilo"
+                                loading="lazy" />
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                            <li>
+                                <a class="dropdown-item" href="/home/settings"><i
+                                        class="fas fa-gear me-2"></i>Impostazioni</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/logout"><i
+                                        class="fas fa-arrow-right-from-bracket me-2"></i>Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Right elements -->
+            </div>
+            <!-- Container wrapper -->
+        </nav>
+        <!-- Navbar -->
+
+        <!-- Horizontally aligned div -->
+        <div class="container overflow-hidden p-5">
+            <div class="row g-5">
+                <div class="col-12 col-md-6">
+                    <div style="height:25vh">
+                        <canvas class="my_chart"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div style="height:25vh">
+                        <canvas class="my_chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-5">
+                <div class="col-12 col-md-6">
+                    <div style="height:25vh">
+                        <canvas class="my_chart"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div style="height:25vh">
+                        <canvas class="my_chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    user: {},
+                    collapseClosed: true
+                }
+            },
+            methods: {
+                // Fetch user image from server /users/@me
+                fetchUser() {
+                    fetch('/api/users/@me')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.user = data;
+                        });
+                }
+            },
+            mounted() {
+                this.fetchUser();
+            }
+
+        }).mount('#app')
+
+    </script>
+
+    <script>
+        
+ 
+
+
+        const ctxs = document.querySelectorAll('.my_chart');
+
+        const data = {
+            labels: [1, 2, 3, 4, 5, 6, 7],
+            datasets: [{
+                label: 'My First Dataset',
+                data: [65, 59, 80, 81, 56, 55, 40],
+                fill: false,
+                borderColor: '#FC72A5',
+                tension: 0.3
+            }],
+        };
+
+
+        ctxs.forEach(ctx => {
+            newChart(ctx, 'line', data);
+        });
+
+        // ctxs.forEach(ctx => {
+        //     new Chart(ctx, {
+        //         type: 'line',
+        //         data: data,
+        //         options: {
+        //             responsive: true,
+        //             maintainAspectRatio: false,
+        //             redraw: true,
+        //             plugins: {
+        //                 legend: {
+        //                     title: {
+        //                         display: true,
+        //                         text: 'Legend'
+        //                     }   
+        //                 }
+        //             }
+        //         }
+        //     });
+        // });
+
+        function newChart(element, type, data, title)
+        {
+            new Chart(element, {
+                type: type,
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    redraw: true,
+                    plugins: {
+                        legend: {
+                            title: {
+                                display: title ? true : false,
+                                text: title
+                            }   
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>
