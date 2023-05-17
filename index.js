@@ -36,7 +36,7 @@ const _db = sqlite.open({
     // amount: REAL
     // description: TEXT
     // category: TEXT
-    await db.run('CREATE TABLE IF NOT EXISTS expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT, date TEXT, amount REAL, description TEXT, category TEXT)');
+    await db.run('CREATE TABLE IF NOT EXISTS expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT, date TEXT, amount REAL, description TEXT, category TEXT, payee TEXT)');
     await db.run('CREATE INDEX IF NOT EXISTS user_id ON expenses (user_id)');
 
 
@@ -145,4 +145,34 @@ app.get('/api/users/@me', async (req, res) => {
     const db = await _db;
     const user = await db.get('SELECT * FROM users WHERE id = ?', req.user.id);
     res.json(user);
+});
+
+app.get('/api/expenses/@me', async (req, res) => {
+    const db = await _db;
+    const expenses = await db.all('SELECT * FROM expenses WHERE user_id = ?', req.user.id);
+    res.json(expenses);
+});
+
+// get /api/image/:id
+app.get('/api/payees/:id', async (req, res) => {
+    // check if file exists in folder /assets/payees/:id, ignore extension, if exists send it, else send default image
+    const fs = require('fs');
+    const path = require('path');
+    let payee = req.params.id;
+    const dir = path.join(__dirname, 'public/assets/payees');
+    const files = fs.readdirSync(dir);
+    if (files.length > 0) {
+        // replace spaces with underscores
+        payee = payee.replace(/\s/g, '_').toLowerCase();
+
+        const file = files.find(f => f.split('.')[0].toLowerCase() == payee);
+
+        if (file) {
+            res.sendFile(path.join(__dirname, `public/assets/payees/${file}.png`));
+        } else {
+            res.sendFile(path.join(__dirname, 'public/assets/payees/default.png'));
+        }
+    } else {
+        res.sendFile(path.join(__dirname, 'public/assets/payees/default.png'));
+    }
 });
