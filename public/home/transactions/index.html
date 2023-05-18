@@ -56,8 +56,8 @@
                         <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
                             id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown"
                             aria-expanded="false">
-                            <img v-if="user.picture" :src="user.picture" class="rounded-circle" height="30" alt="Icona profilo"
-                                loading="lazy" />
+                            <img v-if="user.picture" :src="user.picture" class="rounded-circle" height="30"
+                                alt="Icona profilo" loading="lazy" />
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
                             <li>
@@ -78,16 +78,72 @@
         <!-- Navbar -->
 
         <!-- Horizontally aligned div -->
-        <div class="container overflow-hidden p-5">
+        <div class="container p-5">
+            <div class="row d-sm-none">
+                <div class="col-12">
+                    <button class="btn btn-link fw-bold" data-mdb-toggle="collapse" data-mdb-target="#collapse-menu">Azioni <i class="fa-solid fa-caret-down"></i></button>
+                </div>
+            </div>
+            <div id="collapse-menu" class="collapse d-sm-block">
+                <div class="row">
+                    <div class="col-12 col-sm-3">
+                        <button class="btn btn-link fw-bold" @click="addTransaction()"><i class="fa-solid fa-plus"></i>
+                            Aggiungi transazione</button>
+                    </div>
+                    <div class="col-12 col-sm-3">
+                        <div class="dropdown">
+                            <button class="btn btn-link fw-bold dropdown-toggle" type="button" id="dropdownMenuButton1"
+                                data-mdb-toggle="dropdown" aria-expanded="false">
+                                Filtra per categoria
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item" href="#">Cibo</a></li>
+                                <li><a class="dropdown-item" href="#">Casa</a></li>
+                                <li><a class="dropdown-item" href="#">Svago</a></li>
+                                <li><a class="dropdown-item" href="#">Bollette</a></li>
+                                <li><a class="dropdown-item" href="#">Lavoro</a></li>
+                                <li><a class="dropdown-item" href="#">Altro</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-3">
+                        <div class="dropdown">
+                            <button class="btn btn-link fw-bold dropdown-toggle" type="button" id="dropdownMenuButton1"
+                                data-mdb-toggle="dropdown" aria-expanded="false">
+                                Filtra per tipo
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item" href="#">Entrate</a></li>
+                                <li><a class="dropdown-item" href="#">Uscite</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-3">
+                        <div class="dropdown">
+                            <button class="btn btn-link fw-bold dropdown-toggle" type="button" id="dropdownMenuButton1"
+                                data-mdb-toggle="dropdown" aria-expanded="false">
+                                Filtra per data
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item" href="#">Ultima settimana</a></li>
+                                <li><a class="dropdown-item" href="#">Ultimo mese</a></li>
+                                <li><a class="dropdown-item" href="#">Ultimo anno</a></li>
+                                <li><a class="dropdown-item" href="#">Tutto</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Table -->
             <table class="table table-striped table-hover">
                 <!-- Contains this headers date, amount, description, category, payee but translated to italian -->
                 <thead>
                     <tr>
-                        <th scope="col">Transazione</th>
-                        <th scope="col">Descrizione</th>
-                        <th scope="col">Importo</th>
-                        <th scope="col">Data</th>
+                        <th scope="col"><b>Transazione</b></th>
+                        <th scope="col"><b>Descrizione</b></th>
+                        <th scope="col"><b>Importo</b></th>
+                        <th scope="col"><b>Data</b></th>
                         <th scope="col"><i class="fa-solid fa-bolt-lightning"></i></th>
                     </tr>
                 </thead>
@@ -98,22 +154,25 @@
                         <!-- put circle image that is from /api/image/{payee} -->
                         <td>
                             <div class="d-flex align-items-center">
-                                <img :src="'/api/payees/' + transaction.payee" class="rounded-circle" height="45px" width="45px" loading="lazy" />
+                                <img :src="'/api/payees/' + transaction.payee" class="rounded-circle" height="45px"
+                                    width="45px" loading="lazy" />
                                 <div class="ms-3">
-                                  <p class="fw-bold mb-1">{{ transaction.payee }}</p>
-                                  <p class="text-muted mb-0">{{ transaction.category }}</p>
+                                    <p class="fw-bold mb-1">{{ transaction.payee }}</p>
+                                    <p class="text-muted mb-0">{{ transaction.category }}</p>
                                 </div>
-                              </div>
+                            </div>
                         </td>
                         <td>{{ transaction.description }}</td>
                         <!-- Amount but if negative make it red, if positive make it green, also add icons -->
-                        <td v-if="transaction.amount < 0" class="text-danger"><i class="fa-solid fa-minus"></i> {{ transaction.amount }} €</td>
+                        <td v-if="transaction.amount < 0" class="text-danger"><i class="fa-solid fa-minus"></i> {{
+                            transaction.amount }} €</td>
                         <td v-else class="text-success"><i class="fa-solid fa-plus"></i> {{ transaction.amount }} €</td>
                         <td>{{ transaction.date }}</td>
                         <!-- Add modify and delete buttons -->
                         <td>
                             <div class="btn-group" role="group" aria-label="Basic example">
-                                <button type="button" class="btn btn-primary"><i class="fa-solid fa-pencil"></i></button>
+                                <button type="button" class="btn btn-primary"><i
+                                        class="fa-solid fa-pencil"></i></button>
                                 <button type="button" class="btn btn-danger"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </td>
@@ -121,6 +180,22 @@
                     <!-- vue if no transaction one single row -->
                     <tr v-if="transactions.length == 0">
                         <td colspan="5" class="text-center">Non ci sono transazioni da mostrare :(</td>
+                    </tr>
+                    <!-- Add pagination -->
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            <!-- Left right buttons -->
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button id="pagination-1" type="button" class="btn btn-primary" :disabled="!(currentPage > 1)">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+                                <input type="number" class="form-control rounded-0 text-center" placeholder="Pagina"
+                                    :value="currentPage" min="1">
+                                <button id="pagination-2" type="button" class="btn btn-primary" :disabled="currentPage >= totalPages">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -135,7 +210,9 @@
                 return {
                     user: {},
                     collapseClosed: true,
-                    transactions: []
+                    transactions: [],
+                    currentPage: 1,
+                    totalPages: 1
                 }
             },
             methods: {
@@ -145,8 +222,8 @@
                         .then(response => response.json())
                         .then(data => {
                             this.user = data;
-                            if (!user.picture)
-                                user.picture = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png";
+                            if (!this.user.picture)
+                                this.user.picture = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png";
                         });
                 },
                 async fetchTransactions() {
@@ -154,6 +231,7 @@
                         .then(response => response.json())
                         .then(data => {
                             this.transactions = data;
+                            totalPages = Math.ceil(this.transactions.length / 10);
                         });
                 }
             },
