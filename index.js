@@ -147,14 +147,14 @@ app.get('/api/users/@me', async (req, res) => {
     res.json(user);
 });
 
-app.get('/api/expenses/@me', async (req, res) => {
+app.get('/api/transactions/@me', async (req, res) => {
     const db = await _db;
     const expenses = await db.all('SELECT * FROM expenses WHERE user_id = ?', req.user.id);
     res.json(expenses);
 });
 
 // get /api/image/:id
-app.get('/api/payees/:id', async (req, res) => {
+app.get('/api/payee_picture/:id', async (req, res) => {
     // check if file exists in folder /assets/payees/:id, ignore extension, if exists send it, else send default image
     const fs = require('fs');
     const path = require('path');
@@ -175,4 +175,133 @@ app.get('/api/payees/:id', async (req, res) => {
     } else {
         res.sendFile(path.join(__dirname, 'public/assets/payees/default.png'));
     }
+});
+
+// get /api/categories/@me
+app.get('/api/categories/@me', async (req, res) => {
+    let defaultCategories = [
+        'Food',
+        'Transportation',
+        'Shopping',
+        'Entertainment',
+        'Bills',
+        'Health',
+        'Travel',
+        'Education'
+    ];
+    
+    const db = await _db;
+    const categories = await db.all('SELECT DISTINCT category FROM expenses WHERE user_id = ?', req.user.id);
+
+    // combine arrays and remove duplicates
+    const combined = [...new Set([...categories.map(c => c.category), ...defaultCategories])];
+
+    res.json(combined);
+});
+
+// get /api/payees/@me
+app.get('/api/payees/@me', async (req, res) => {
+    let defaultPayees = [
+        "Netflix",
+        "Amazon",
+        "Esselunga",
+        "Coop",
+        "Conad",
+        "Carrefour",
+        "Ipercoop",
+        "Lidl",
+        "Pam",
+        "Unieuro",
+        "MediaWorld",
+        "Enel",
+        "Eni",
+        "TIM",
+        "Vodafone",
+        "Fastweb",
+        "Trenitalia",
+        "Alitalia",
+        "Poste Italiane",
+        "Sky Italia",
+        "Uber",
+        "Deliveroo",
+        "Glovo",
+        "Just Eat",
+        "PayPal",
+        "Google",
+        "Apple",
+        "Microsoft",
+        "Samsung",
+        "Huawei",
+        "Sony",
+        "Zara",
+        "H&M",
+        "Bershka",
+        "Decathlon",
+        "Intimissimi",
+        "Yoox",
+        "Booking.com",
+        "Airbnb",
+        "Ryanair",
+        "EasyJet",
+        "ItaliaOnline",
+        "Mediaset",
+        "Rai",
+        "La Repubblica",
+        "Corriere della Sera",
+        "Privalia",
+        "Sephora",
+        "Ikea",
+        "Euronics",
+        "Expert",
+        "Unieuro",
+        "Volotea",
+        "Blablacar",
+        "LinkedIn",
+        "Uber Eats",
+        "Subito.it",
+        "Groupon",
+        "Groupama Assicurazioni",
+        "Allianz",
+        "Generali",
+        "Satispay",
+        "Fineco Bank",
+        "Banco BPM",
+        "Intesa Sanpaolo",
+        "UniCredit",
+        "Mediolanum",
+        "Banco Posta",
+        "Sisal",
+        "Lottomatica",
+        "SuperEnalotto",
+        "Snai",
+        "Gazzetta dello Sport",
+        "Il Sole 24 Ore",
+        "Trenord",
+        "Illy",
+        "MSC Crociere",
+        "Costa Crociere",
+        "FlixBus",
+        "GoOpti",
+        "Trenitalia",
+        "PostePay",
+        "N26",
+        "WINDTRE",
+        "Fastweb",
+        "Telepass",
+        "Eni gas e luce",
+        "Iliad",
+        "Tre",
+        "Wind",
+        "Fastweb",
+        "Lottomatica",
+        "SuperEnalotto",
+    ];
+    
+    const db = await _db;
+    const payees = await db.all('SELECT DISTINCT payee FROM expenses WHERE user_id = ?', req.user.id);
+    
+    // combine arrays and remove duplicates
+    const combined = [...new Set([...payees.map(p => p.payee), ...defaultPayees])];
+
+    res.json(combined);
 });

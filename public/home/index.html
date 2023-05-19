@@ -58,8 +58,9 @@
                         <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
                             id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown"
                             aria-expanded="false">
-                            <img v-if="user.picture" :src="user.picture" class="rounded-circle" height="30" alt="Icona profilo"
-                                loading="lazy" />
+                            <object :data="user.picture" type="image/png" class="rounded-circle" height="30" loading="lazy">
+                                <img src="/assets/default_user.png" class="rounded-circle" height="30" loading="lazy" /> 
+                            </object>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
                             <li>

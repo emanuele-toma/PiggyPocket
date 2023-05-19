@@ -56,8 +56,10 @@
                         <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
                             id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown"
                             aria-expanded="false">
-                            <img v-if="user.picture" :src="user.picture" class="rounded-circle" height="30"
-                                alt="Icona profilo" loading="lazy" />
+                            <object :data="user.picture" type="image/png" class="rounded-circle" height="30"
+                                loading="lazy">
+                                <img src="/assets/default_user.png" class="rounded-circle" height="30" loading="lazy" />
+                            </object>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
                             <li>
@@ -83,28 +85,25 @@
                 <div class="col-12">
                     <!-- Search bar with button on the right containing lens from font-awesome -->
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Cerca transazione" aria-label="Cerca"
-                            aria-describedby="button-addon2">
-                        <button class="btn btn-primary" type="button" id="button-addon2"><i
-                                class="fa-solid fa-magnifying-glass"></i></button>
+                        <div class="form-outline">
+                            <input id="txt-cerca" type="text" class="form-control">
+                            <label class="form-label" for="txt-cerca">Cerca transazione</label>
+                        </div>
+                        <button id="btn-cerca" class="btn btn-primary" type="button">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
                     </div>
                 </div>
             </div>
 
             <!-- Desktop -->
 
-            <div class="border p-4 rounded d-none d-sm-block">
-                <div class="row d-md-none">
-                    <div class="col-12">
-                        <button class="btn btn-link fw-bold" data-mdb-toggle="collapse"
-                            data-mdb-target="#collapse-menu">Azioni <i class="fa-solid fa-caret-down"></i></button>
-                    </div>
-                </div>
-                <div id="collapse-menu" class="collapse d-md-block">
+            <div class="border p-4 rounded d-none d-md-block">
+                <div class="d-md-block">
                     <div class="row">
                         <div class="col-12 col-md-3">
-                            <button class="btn btn-link fw-bold" @click="addTransaction()"><i
-                                    class="fa-solid fa-plus"></i>
+                            <button class="btn btn-link fw-bold" data-mdb-toggle="modal"
+                                data-mdb-target="#exampleModal"><i class="fa-solid fa-plus"></i>
                                 Aggiungi transazione</button>
                         </div>
                         <div class="col-12 col-md-3">
@@ -114,12 +113,7 @@
                                     Filtra per categoria
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item" href="#">Cibo</a></li>
-                                    <li><a class="dropdown-item" href="#">Casa</a></li>
-                                    <li><a class="dropdown-item" href="#">Svago</a></li>
-                                    <li><a class="dropdown-item" href="#">Bollette</a></li>
-                                    <li><a class="dropdown-item" href="#">Lavoro</a></li>
-                                    <li><a class="dropdown-item" href="#">Altro</a></li>
+                                    <li v-for="category in categories"><a class="dropdown-item" href="#">{{ category }}</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -171,7 +165,7 @@
                             <!-- put circle image that is from /api/image/{payee} -->
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <img :src="'/api/payees/' + transaction.payee" class="rounded-circle" height="45px"
+                                    <img :src="'/api/payee_picture/' + transaction.payee" class="rounded-circle" height="45px"
                                         width="45px" loading="lazy" />
                                     <div class="ms-3">
                                         <p class="fw-bold mb-1">{{ transaction.payee }}</p>
@@ -209,13 +203,13 @@
                         <tr>
                             <td colspan="5" class="text-center">
                                 <!-- Left right buttons -->
-                                <div class="btn-group" role="group" aria-label="Basic example">
+                                <div class="btn-group w-50" role="group">
                                     <button id="pagination-1" type="button" class="btn btn-primary"
                                         :disabled="!(currentPage > 1)">
                                         <i class="fa-solid fa-chevron-left"></i>
                                     </button>
                                     <input type="number" class="form-control rounded-0 text-center" placeholder="Pagina"
-                                        :value="currentPage" min="1">
+                                        :value="currentPage" min="1" :max="totalPages">
                                     <button id="pagination-2" type="button" class="btn btn-primary"
                                         :disabled="currentPage >= totalPages">
                                         <i class="fa-solid fa-chevron-right"></i>
@@ -228,27 +222,28 @@
             </div>
 
             <!-- /Desktop -->
-            
+
             <!-- Mobile -->
 
-            <div class="d-block d-sm-none">
-                <div class="row d-md-none">
+            <div class="d-block d-md-none">
+                <div class="row">
                     <div class="col-12">
-                        <button class="btn btn-link fw-bold" data-mdb-toggle="collapse" data-mdb-target="#collapse-menu">Azioni <i
-                                class="fa-solid fa-caret-down"></i></button>
+                        <button class="btn btn-link fw-bold" data-mdb-toggle="collapse"
+                            data-mdb-target="#collapse-menu">Azioni <i class="fa-solid fa-caret-down"></i></button>
                     </div>
                 </div>
                 <div id="collapse-menu" class="collapse d-md-block">
                     <div class="row">
                         <div class="col-12 col-md-3">
-                            <button class="btn btn-link fw-bold" @click="addTransaction()"><i class="fa-solid fa-plus"></i>
+                            <button class="btn btn-link fw-bold" data-mdb-toggle="modal"
+                                data-mdb-target="#exampleModal"><i class="fa-solid fa-plus"></i>
                                 Aggiungi transazione
                             </button>
                         </div>
                         <div class="col-12 col-md-3">
                             <div class="dropdown">
-                                <button class="btn btn-link fw-bold dropdown-toggle" type="button" id="dropdownMenuButton1"
-                                    data-mdb-toggle="dropdown" aria-expanded="false">
+                                <button class="btn btn-link fw-bold dropdown-toggle" type="button"
+                                    id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
                                     Filtra per categoria
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -263,8 +258,8 @@
                         </div>
                         <div class="col-12 col-md-3">
                             <div class="dropdown">
-                                <button class="btn btn-link fw-bold dropdown-toggle" type="button" id="dropdownMenuButton1"
-                                    data-mdb-toggle="dropdown" aria-expanded="false">
+                                <button class="btn btn-link fw-bold dropdown-toggle" type="button"
+                                    id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
                                     Filtra per tipo
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -275,8 +270,8 @@
                         </div>
                         <div class="col-12 col-md-3">
                             <div class="dropdown">
-                                <button class="btn btn-link fw-bold dropdown-toggle" type="button" id="dropdownMenuButton1"
-                                    data-mdb-toggle="dropdown" aria-expanded="false">
+                                <button class="btn btn-link fw-bold dropdown-toggle" type="button"
+                                    id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
                                     Filtra per data
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -297,8 +292,8 @@
                         <div class="d-flex justify-content-between">
                             <div>
                                 <div class="d-flex align-items-center">
-                                    <img src="https://www.macitynet.it/wp-content/uploads/2016/06/netflix-logo-930x930.png"
-                                        class="rounded-circle" height="45px" width="45px" loading="lazy" />
+                                    <img :src="'/api/payee_picture/' + transaction.payee" class="rounded-circle" height="45px"
+                                        width="45px" loading="lazy" />
                                     <div class="ms-3">
                                         <p class="fw-bold mb-1">{{ transaction.payee }}</p>
                                         <p class="text-muted mb-0">{{ transaction.category }}</p>
@@ -333,7 +328,7 @@
                         <i class="fa-solid fa-chevron-left"></i>
                     </button>
                     <input type="number" class="form-control rounded-0 text-center" placeholder="Pagina"
-                        :value="currentPage" min="1">
+                        :value="currentPage" min="1" :max="totalPages">
                     <button id="pagination-2" type="button" class="btn btn-primary"
                         :disabled="currentPage >= totalPages">
                         <i class="fa-solid fa-chevron-right"></i>
@@ -343,9 +338,71 @@
 
             <!-- /Mobile -->
 
+            <!-- Modal -->
+
+            <div class="modal top fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
+                <div class="modal-dialog modal-lg ">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Inserisci una nuova transazione</h5>
+                            <button type="button" class="btn-close" data-mdb-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="fa-solid fa-building"></i></span>
+                                <input type="text" class="form-control rounded-end" placeholder="Beneficiario / Mittente" list="dl-beneficiari" />
+                                <datalist id="dl-beneficiari">
+                                    <!-- Using vue load payees -->
+                                    <option v-for="payee in payees" :value="payee">
+                                        {{ payee }}
+                                    </option>
+                                </datalist>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="fa-solid fa-tag"></i></span>
+                                <input type="text" class="form-control rounded-end" placeholder="Categoria" list="dl-categorie" />
+                                <datalist id="dl-categorie">
+                                    <!-- Using vue load categories -->
+                                    <option v-for="category in categories" :value="category">
+                                        {{ category }}
+                                    </option>
+                                </datalist>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <span class="input-group-text"><i class="fa-solid fa-comment"></i></span>
+                                <textarea class="form-control rounded-end" placeholder="Descrizione" style="resize: none"></textarea>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <!-- Number import with plus/minus button -->
+                                <span class="input-group-text"><i class="fa-solid fa-plus-minus"></i></span>
+                                <input type="number" class="form-control rounded-end" placeholder="Importo" />
+                            </div>
+
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
+                                Annulla
+                            </button>
+                            <button type="button" class="btn btn-primary">Inserisci</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
     <script>
+
+        document.querySelectorAll('.form-outline').forEach((formOutline) => {
+            new mdb.Input(formOutline).init();
+        });
+
         const { createApp } = Vue;
 
         createApp({
@@ -355,7 +412,9 @@
                     collapseClosed: true,
                     transactions: [],
                     currentPage: 1,
-                    totalPages: 1
+                    totalPages: 1,
+                    categories: [],
+                    payees: []
                 }
             },
             methods: {
@@ -366,7 +425,7 @@
                         .then(data => {
                             this.user = data;
                             if (!this.user.picture)
-                                this.user.picture = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png";
+                                this.user.picture = "/assets/default_user.png";
                         });
                 },
                 async fetchTransactions() {
@@ -374,12 +433,29 @@
                         .then(response => response.json())
                         .then(data => {
                             this.transactions = data;
-                            totalPages = Math.ceil(this.transactions.length / 10);
+                            this.totalPages = Math.ceil(this.transactions.length / 10);
+                        });
+                },
+                async fetchCategories() {
+                    await fetch('/api/categories/@me')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.categories = data;
+                        });
+                },
+                async fetchPayees() {
+                    await fetch('/api/payees/@me')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.payees = data;
                         });
                 }
             },
             mounted() {
                 this.fetchUser();
+                this.fetchTransactions();
+                this.fetchCategories();
+                this.fetchPayees();
             }
 
         }).mount('#app')
