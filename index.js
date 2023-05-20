@@ -134,6 +134,18 @@ app.get('/logout', (req, res, next) => {
     });
 });
 
+// get /assets/default_user.png return random file from /assets/default_users
+app.get('/assets/default_user.png', (req, res) => {
+    const fs = require('fs');
+    const path = require('path');
+    const dir = path.join(__dirname, 'public/assets/default_users');
+    const files = fs.readdirSync(dir);
+    const file = files[Math.floor(Math.random() * files.length)];
+    res.sendFile(path.join(dir, file));
+});
+
+
+
 
 // Api
 
@@ -165,7 +177,7 @@ app.get('/api/payee_picture/:id', async (req, res) => {
         // replace spaces with underscores
         payee = payee.replace(/\s/g, '_').toLowerCase();
 
-        const file = files.find(f => f.split('.')[0].toLowerCase() == payee);
+        const file = files.find(f => f.split('.')[0].toLowerCase() == payee).split('.')[0];
 
         if (file) {
             res.sendFile(path.join(__dirname, `public/assets/payees/${file}.png`));
@@ -304,4 +316,32 @@ app.get('/api/payees/@me', async (req, res) => {
     const combined = [...new Set([...payees.map(p => p.payee), ...defaultPayees])];
 
     res.json(combined);
+});
+
+app.post('/api/transactions/@me', async (req, res) => {
+    const db = await _db;
+    const { payee, category, description, amount, date } = req.body;
+
+    // do appropriate checks, each check is separated with it's own error message
+    if (!payee || payee.trim().length < 1)
+        return res.status(400).json({ error: 'Payee is required' });
+    if (!category || category.trim().length < 1)
+        return res.status(400).json({ error: 'Category is required' });
+    if (!description || description.trim().length < 1)
+        return res.status(400).json({ error: 'Description is required' });
+    if (!amount || isNaN(amount))
+        return res.status(400).json({ error: 'Amount is required and must be a number' });
+    if (!date || isNaN(Date.parse(date)))
+        return res.status(400).json({ error: 'Date is required and must be a valid date' });
+
+    const user_id = req.user.id;
+    const sql = 'INSERT INTO expenses (user_id, payee, category, description, amount, date) VALUES (?, ?, ?, ?, ?, ?)';
+    const params = [user_id, payee, category, description, amount, date];
+    const result = await db.run(sql, params);
+
+    if (result.changes == 1) {
+        res.status(201).json({ id: result.lastID });
+    } else {
+        res.status(500).json({ message: 'Something went wrong, please try again later...' });
+    }
 });
