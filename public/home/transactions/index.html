@@ -58,7 +58,8 @@
                             aria-expanded="false">
                             <object :data="user.picture" type="image/png" class="rounded-circle" style="height: 30px;"
                                 loading="lazy">
-                                <img src="/assets/default_user.png" class="rounded-circle" style="height: 30px;" loading="lazy" />
+                                <img src="/assets/default_user.png" class="rounded-circle" style="height: 30px;"
+                                    loading="lazy" />
                             </object>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
@@ -86,7 +87,7 @@
                     <!-- Search bar with button on the right containing lens from font-awesome -->
                     <div class="input-group mb-3">
                         <div class="form-outline">
-                            <input id="txt-cerca" type="text" class="form-control">
+                            <input v-model="filters.search" id="txt-cerca" type="text" class="form-control">
                             <label class="form-label" for="txt-cerca">Cerca transazione</label>
                         </div>
                         <button id="btn-cerca" class="btn btn-primary" type="button">
@@ -103,17 +104,23 @@
                     <div class="row">
                         <div class="col-12 col-md-3">
                             <button class="btn btn-link fw-bold" data-mdb-toggle="modal"
-                                data-mdb-target="#exampleModal"><i class="fa-solid fa-plus"></i>
+                                data-mdb-target="#createModal"><i class="fa-solid fa-plus"></i>
                                 Aggiungi transazione</button>
                         </div>
                         <div class="col-12 col-md-3">
                             <div class="dropdown">
                                 <button class="btn btn-link fw-bold dropdown-toggle" type="button"
                                     id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
-                                    Filtra per categoria
+                                    {{ filters.category || "Filtra per categoria" }}
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li v-for="category in categories"><a class="dropdown-item" href="#">{{ category }}</a></li>
+                                    <li>
+                                        <a @click="filters.category = null" class="dropdown-item" href="#">Tutte</a>
+                                    </li>
+                                    <li v-for="category in categories">
+                                        <a @click="filters.category = category" class="dropdown-item" href="#">{{
+                                            category }}</a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -121,11 +128,20 @@
                             <div class="dropdown">
                                 <button class="btn btn-link fw-bold dropdown-toggle" type="button"
                                     id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
-                                    Filtra per tipo
+                                    <!-- Show the selected type or "Filter by type", if income show "Entrate" if expenditure show "Uscite" -->
+                                    {{
+                                    (!filters.type) ? "Filtra per tipo" :
+                                    (filters.type == "income") ? "Entrate" :
+                                    (filters.type == "expenditure") ? "Uscite" :
+                                    "Filtra per tipo"
+                                    }}
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item" href="#">Entrate</a></li>
-                                    <li><a class="dropdown-item" href="#">Uscite</a></li>
+                                    <li><a @click="filters.type = null" class="dropdown-item" href="#">Tutte</a></li>
+                                    <li><a @click="filters.type = 'income'" class="dropdown-item" href="#">Entrate</a>
+                                    </li>
+                                    <li><a @click="filters.type = 'expenditure'" class="dropdown-item"
+                                            href="#">Uscite</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -133,13 +149,23 @@
                             <div class="dropdown">
                                 <button class="btn btn-link fw-bold dropdown-toggle" type="button"
                                     id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
-                                    Filtra per data
+                                    {{
+                                    (!filters.date_span) ? "Filtra per Data" :
+                                    (filters.date_span == "week") ? "Ultima settimana" :
+                                    (filters.date_span == "month") ? "Ultimo mese" :
+                                    (filters.date_span == "year") ? "Ultimo anno" :
+                                    "Filtra per Data"
+                                    }}
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item" href="#">Ultima settimana</a></li>
-                                    <li><a class="dropdown-item" href="#">Ultimo mese</a></li>
-                                    <li><a class="dropdown-item" href="#">Ultimo anno</a></li>
-                                    <li><a class="dropdown-item" href="#">Tutto</a></li>
+                                    <li><a @click="filters.date_span = null" class="dropdown-item" href="#">Tutto</a>
+                                    </li>
+                                    <li><a @click="filters.date_span = 'week'" class="dropdown-item" href="#">Ultima
+                                            settimana</a></li>
+                                    <li><a @click="filters.date_span = 'month'" class="dropdown-item" href="#">Ultimo
+                                            mese</a></li>
+                                    <li><a @click="filters.date_span = 'year'" class="dropdown-item" href="#">Ultimo
+                                            anno</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -165,7 +191,8 @@
                             <!-- put circle image that is from /api/image/{payee} -->
                             <td>
                                 <div class="d-flex align-items-center lh-1">
-                                    <img :src="'/api/payee_picture/' + transaction.payee" class="rounded-circle" style="height: 45px; width: 45px;" loading="lazy" />
+                                    <img :src="'/api/payee_picture/' + transaction.payee" class="rounded-circle"
+                                        style="height: 45px; width: 45px;" loading="lazy" />
                                     <div class="ms-3">
                                         <p class="fw-bold mb-1">{{ transaction.payee }}</p>
                                         <p class="text-muted mb-0">{{ transaction.category }}</p>
@@ -178,22 +205,23 @@
                                 </div>
                             </td>
                             <!-- Amount but if negative make it red, if positive make it green, also add icons -->
-                            <td v-if="transaction.amount < 0" class="text-danger align-middle">
-                                <b>- {{ Math.abs(transaction.amount) }} €</b>
+                            <td v-if="transaction.amount < 0" class="text-danger align-middle text-nowrap">
+                                <b>- {{ Math.abs(transaction.amount).toFixed(2) }} €</b>
                             </td>
-                            <td v-else class="text-success align-middle">
-                                <b>+ {{ Math.abs(transaction.amount) }} €</b>
+                            <td v-else class="text-success align-middle text-nowrap">
+                                <b>+ {{ Math.abs(transaction.amount).toFixed(2) }} €</b>
                             </td>
                             <td class="align-middle">
-                                {{ new Date(transaction.date).toLocaleString([], {dateStyle: 'medium', timeStyle: 'short'}) }}
+                                {{ new Date(transaction.date).toLocaleString([], {dateStyle: 'medium', timeStyle:
+                                'short'}) }}
                             </td>
                             <!-- Add modify and delete buttons -->
                             <td class="align-middle">
                                 <div class="btn-group" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-primary">
+                                    <button @click="openUpdate(transaction)" type="button" class="btn btn-primary">
                                         <i class="fa-solid fa-pencil"></i>
                                     </button>
-                                    <button type="button" class="btn btn-danger">
+                                    <button @click="openDelete(transaction)" type="button" class="btn btn-danger">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </div>
@@ -209,13 +237,13 @@
                                 <!-- Left right buttons -->
                                 <div class="btn-group w-50" role="group">
                                     <button id="pagination-1" type="button" class="btn btn-primary"
-                                        :disabled="!(currentPage > 1)">
+                                        :disabled="!(currentPage > 1)" @click="currentPage--">
                                         <i class="fa-solid fa-chevron-left"></i>
                                     </button>
                                     <input type="number" class="form-control rounded-0 text-center" placeholder="Pagina"
-                                        :value="currentPage" min="1" :max="totalPages">
+                                        v-model="currentPage" min="1" :max="totalPages">
                                     <button id="pagination-2" type="button" class="btn btn-primary"
-                                        :disabled="currentPage >= totalPages">
+                                        :disabled="currentPage >= totalPages" @click="currentPage++">
                                         <i class="fa-solid fa-chevron-right"></i>
                                     </button>
                                 </div>
@@ -229,7 +257,7 @@
 
             <!-- Mobile -->
 
-            <div class="d-block d-lg-none">
+            <div class="d-block d-lg-none mb-5">
                 <div class="row">
                     <div class="col-12">
                         <button class="btn btn-link fw-bold" data-mdb-toggle="collapse"
@@ -240,7 +268,7 @@
                     <div class="row">
                         <div class="col-12 col-md-3">
                             <button class="btn btn-link fw-bold" data-mdb-toggle="modal"
-                                data-mdb-target="#exampleModal"><i class="fa-solid fa-plus"></i>
+                                data-mdb-target="#createModal"><i class="fa-solid fa-plus"></i>
                                 Aggiungi transazione
                             </button>
                         </div>
@@ -248,15 +276,16 @@
                             <div class="dropdown">
                                 <button class="btn btn-link fw-bold dropdown-toggle" type="button"
                                     id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
-                                    Filtra per categoria
+                                    {{ filters.category || "Filtra per categoria" }}
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item" href="#">Cibo</a></li>
-                                    <li><a class="dropdown-item" href="#">Casa</a></li>
-                                    <li><a class="dropdown-item" href="#">Svago</a></li>
-                                    <li><a class="dropdown-item" href="#">Bollette</a></li>
-                                    <li><a class="dropdown-item" href="#">Lavoro</a></li>
-                                    <li><a class="dropdown-item" href="#">Altro</a></li>
+                                    <li>
+                                        <a @click="filters.category = null" class="dropdown-item" href="#">Tutte</a>
+                                    </li>
+                                    <li v-for="category in categories">
+                                        <a @click="filters.category = category" class="dropdown-item" href="#">{{
+                                            category }}</a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -264,11 +293,20 @@
                             <div class="dropdown">
                                 <button class="btn btn-link fw-bold dropdown-toggle" type="button"
                                     id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
-                                    Filtra per tipo
+                                    <!-- Show the selected type or "Filter by type", if income show "Entrate" if expenditure show "Uscite" -->
+                                    {{
+                                    (!filters.type) ? "Filtra per tipo" :
+                                    (filters.type == "income") ? "Entrate" :
+                                    (filters.type == "expenditure") ? "Uscite" :
+                                    "Filtra per tipo"
+                                    }}
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item" href="#">Entrate</a></li>
-                                    <li><a class="dropdown-item" href="#">Uscite</a></li>
+                                    <li><a @click="filters.type = null" class="dropdown-item" href="#">Tutte</a></li>
+                                    <li><a @click="filters.type = 'income'" class="dropdown-item" href="#">Entrate</a>
+                                    </li>
+                                    <li><a @click="filters.type = 'expenditure'" class="dropdown-item"
+                                            href="#">Uscite</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -276,13 +314,23 @@
                             <div class="dropdown">
                                 <button class="btn btn-link fw-bold dropdown-toggle" type="button"
                                     id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
-                                    Filtra per data
+                                    {{
+                                    (!filters.date_span) ? "Filtra per Data" :
+                                    (filters.date_span == "week") ? "Ultima settimana" :
+                                    (filters.date_span == "month") ? "Ultimo mese" :
+                                    (filters.date_span == "year") ? "Ultimo anno" :
+                                    "Filtra per Data"
+                                    }}
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item" href="#">Ultima settimana</a></li>
-                                    <li><a class="dropdown-item" href="#">Ultimo mese</a></li>
-                                    <li><a class="dropdown-item" href="#">Ultimo anno</a></li>
-                                    <li><a class="dropdown-item" href="#">Tutto</a></li>
+                                    <li><a @click="filters.date_span = null" class="dropdown-item" href="#">Tutto</a>
+                                    </li>
+                                    <li><a @click="filters.date_span = 'week'" class="dropdown-item" href="#">Ultima
+                                            settimana</a></li>
+                                    <li><a @click="filters.date_span = 'month'" class="dropdown-item" href="#">Ultimo
+                                            mese</a></li>
+                                    <li><a @click="filters.date_span = 'year'" class="dropdown-item" href="#">Ultimo
+                                            anno</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -291,12 +339,13 @@
                 <div class="mt-2">
 
                 </div>
-                <div v-for="transaction in transactions" class="card shadow-4-strong">
-                    <div class="card-body lh-sm">
+                <div v-for="transaction in transactions" class="card shadow-4-strong mb-3">
+                    <div @click="openUpdate(transaction)" class="card-body lh-sm">
                         <div class="d-flex justify-content-between">
                             <div>
                                 <div class="d-flex align-items-center">
-                                    <img :src="'/api/payee_picture/' + transaction.payee" class="rounded-circle" style="height: 45px; width: 45px;" loading="lazy" />
+                                    <img :src="'/api/payee_picture/' + transaction.payee" class="rounded-circle"
+                                        style="height: 45px; width: 45px;" loading="lazy" />
                                     <div class="ms-3">
                                         <p class="fw-bold mb-1">{{ transaction.payee }}</p>
                                         <p class="text-muted mb-0">{{ transaction.category }}</p>
@@ -306,10 +355,10 @@
                             <div class="d-flex align-items-center text-end">
                                 <div>
                                     <p v-if="transaction.amount < 0" class="fw-bold mb-1 text-danger">
-                                        - {{ Math.abs(transaction.amount) }}
+                                        - {{ Math.abs(transaction.amount).toFixed(2) }} €
                                     </p>
                                     <p v-else class="fw-bold mb-1 text-success">
-                                        {{ transaction.amount }}
+                                        + {{ transaction.amount.toFixed(2) }}
                                     </p>
                                     <p class="text-muted mb-0">
                                         {{ new Date(transaction.date).toLocaleString([], {dateStyle: 'medium'}) }}
@@ -327,13 +376,14 @@
                 </div>
 
                 <div class="btn-group d-flex align-items-center mt-4">
-                    <button id="pagination-1" type="button" class="btn btn-primary" :disabled="!(currentPage > 1)">
+                    <button id="pagination-1" type="button" class="btn btn-primary" :disabled="!(currentPage > 1)"
+                        @click="currentPage--">
                         <i class="fa-solid fa-chevron-left"></i>
                     </button>
                     <input type="number" class="form-control rounded-0 text-center" placeholder="Pagina"
-                        :value="currentPage" min="1" :max="totalPages">
+                        v-model="currentPage" min="1" :max="totalPages">
                     <button id="pagination-2" type="button" class="btn btn-primary"
-                        :disabled="currentPage >= totalPages">
+                        :disabled="currentPage >= totalPages" @click="currentPage++">
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
                 </div>
@@ -341,22 +391,24 @@
 
             <!-- /Mobile -->
 
-            <!-- Modal -->
+            <!-- Create Modal -->
 
-            <div class="modal top fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            <div class="modal top fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel"
                 aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel"><img class="me-2" src="/assets/favicon.png" height="30" alt="Logo" loading="lazy" /> Inserisci una nuova transazione</h5>
+                            <h5 class="modal-title" id="createModalLabel"><img class="me-2" src="/assets/favicon.png"
+                                    height="30" alt="Logo" loading="lazy" /> Inserisci una nuova transazione</h5>
                             <button type="button" class="btn-close" data-mdb-dismiss="modal"
                                 aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            
+
                             <div class="input-group mb-3">
                                 <span class="input-group-text"><i class="fa-solid fa-building"></i></span>
-                                <input id="create_payer" type="text" class="form-control rounded-end" placeholder="Beneficiario / Mittente" list="dl-beneficiari" />
+                                <input id="create_payer" type="text" class="form-control rounded-end"
+                                    placeholder="Beneficiario / Mittente" list="dl-beneficiari" />
                                 <datalist id="dl-beneficiari">
                                     <!-- Using vue load payees -->
                                     <option v-for="payee in payees" :value="payee">
@@ -367,7 +419,8 @@
 
                             <div class="input-group mb-3">
                                 <span class="input-group-text"><i class="fa-solid fa-tag"></i></span>
-                                <input id="create_category" type="text" class="form-control rounded-end" placeholder="Categoria" list="dl-categorie" />
+                                <input id="create_category" type="text" class="form-control rounded-end"
+                                    placeholder="Categoria" list="dl-categorie" />
                                 <datalist id="dl-categorie">
                                     <!-- Using vue load categories -->
                                     <option v-for="category in categories" :value="category">
@@ -378,22 +431,27 @@
 
                             <div class="input-group mb-3">
                                 <span class="input-group-text"><i class="fa-solid fa-comment"></i></span>
-                                <textarea id="create_description" class="form-control rounded-end" placeholder="Descrizione" style="resize: none"></textarea>
+                                <textarea id="create_description" class="form-control rounded-end"
+                                    placeholder="Descrizione" style="resize: none"></textarea>
                             </div>
 
                             <div class="input-group mb-3">
                                 <!-- Number import with plus/minus button -->
-                                <span class="input-group-text" @click="insert.negative = !insert.negative">
+                                <span class="input-group-text" @click="insert.negative = !insert.negative"
+                                    style="cursor: pointer;">
                                     <i v-if="insert.negative == true" class="fa-solid fa-minus text-danger"></i>
                                     <i v-else class="fa-solid fa-plus text-success"></i>
                                 </span>
-                                <input id="create_amount" type="number" min="0" step="0.01" class="form-control rounded-end" placeholder="Importo, usa pulsante per cambiare il segno" />
+                                <input id="create_amount" type="number" min="0" step="0.01"
+                                    class="form-control rounded-end"
+                                    placeholder="Importo, usa pulsante per cambiare il segno" />
                             </div>
 
                             <!-- Date picker -->
                             <div class="input-group mb-3">
                                 <span class="input-group-text"><i class="fa-solid fa-calendar"></i></span>
-                                <input id="create_date" type="datetime-local" class="form-control rounded-end" placeholder="Data" />
+                                <input id="create_date" type="datetime-local" class="form-control rounded-end"
+                                    placeholder="Data" onfocus="this.showPicker()" />
                             </div>
 
                         </div>
@@ -408,6 +466,116 @@
             </div>
         </div>
 
+        <!-- /Create Modal -->
+
+        <!-- Update Modal -->
+
+        <div class="modal top fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true"
+            data-mdb-backdrop="true" data-mdb-keyboard="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="updateModalLabel"><img class="me-2" src="/assets/favicon.png"
+                                height="30" alt="Logo" loading="lazy" /> Modifica transazione</h5>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="fa-solid fa-building"></i></span>
+                            <input v-model="update.payee" id="update_payer" type="text" class="form-control rounded-end"
+                                placeholder="Beneficiario / Mittente" list="dl-beneficiari" />
+                            <datalist id="dl-beneficiari">
+                                <!-- Using vue load payees -->
+                                <option v-for="payee in payees" :value="payee">
+                                    {{ payee }}
+                                </option>
+                            </datalist>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="fa-solid fa-tag"></i></span>
+                            <input v-model="update.category" id="update_category" type="text"
+                                class="form-control rounded-end" placeholder="Categoria" list="dl-categorie" />
+                            <datalist id="dl-categorie">
+                                <!-- Using vue load categories -->
+                                <option v-for="category in categories" :value="category">
+                                    {{ category }}
+                                </option>
+                            </datalist>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="fa-solid fa-comment"></i></span>
+                            <textarea v-model="update.description" id="update_description"
+                                class="form-control rounded-end" placeholder="Descrizione"
+                                style="resize: none"></textarea>
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <!-- Number import with plus/minus button -->
+                            <span class="input-group-text" @click="update.negative = !update.negative"
+                                style="cursor: pointer;">
+                                <i v-if="update.negative == true" class="fa-solid fa-minus text-danger"></i>
+                                <i v-else class="fa-solid fa-plus text-success"></i>
+                            </span>
+                            <input v-model="update.amount" id="update_amount" type="number" min="0" step="0.01"
+                                class="form-control rounded-end"
+                                placeholder="Importo, usa pulsante per cambiare il segno" />
+                        </div>
+
+                        <!-- Date picker -->
+                        <div class="input-group mb-3">
+                            <span class="input-group-text"><i class="fa-solid fa-calendar"></i></span>
+                            <input v-model="update.date" id="update_date" type="datetime-local"
+                                class="form-control rounded-end" placeholder="Data" onfocus="this.showPicker()" />
+                        </div>
+
+                    </div>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
+                            Annulla
+                        </button>
+                        <div>
+                            <button @click="openDelete(update)" type="button"
+                                class="btn btn-danger me-2">Elimina</button>
+                            <button @click="updateTransaction" type="button" class="btn btn-primary">Modifica</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- /Update Modal -->
+
+        <!-- Delete Modal -->
+
+        <div class="modal top fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true"
+            data-mdb-backdrop="true" data-mdb-keyboard="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel"><img class="me-2" src="/assets/favicon.png"
+                                height="30" alt="Logo" loading="lazy" /> Elimina transazione</h5>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Add message -->
+                        <h5>Sei sicuro di voler eliminare questa transazione?</h5>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
+                            Annulla
+                        </button>
+                        <div>
+                            <button @click="deleteTransaction" type="button" class="btn btn-primary">Elimina</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <!-- Toast -->
 
         <div class="toast-container position-fixed top-0 end-0 p-3">
@@ -415,14 +583,16 @@
                 data-mdb-delay="6000">
                 <div class="toast-header">
                     <img class="me-2" src="/assets/favicon.png" alt="Logo" loading="lazy" style="height: 30px;" />
-                    <strong :class="modal.classes.join(' ')">{{ modal.title }}</strong>
+                    <strong :class="toast.classes.join(' ')">{{ toast.title }}</strong>
                     <button type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close"></button>
                 </div>
                 <div class="toast-body border-top bg">
-                    {{ modal.message }}
+                    {{ toast.message }}
                 </div>
             </div>
         </div>
+
+        <!-- /Toast -->
 
     </div>
     <script>
@@ -444,26 +614,68 @@
                     categories: [],
                     payees: [],
 
+                    update:
+                    {
+                        id: null,
+                        payee: null,
+                        category: null,
+                        description: null,
+                        amount: null,
+                        date: null,
+                        negative: true
+                    },
+
+                    delete:
+                    {
+                        id: null,
+                    },
+
                     insert:
                     {
                         negative: true,
                     },
 
-                    modal:
+                    toast:
                     {
                         title: "PiggyPocket",
                         message: "",
                         classes: ['me-auto'],
+                    },
+
+                    filters:
+                    {
+                        page: 1,
+                        category: null,
+                        type: null,
+                        date_span: null,
+                        search: null,
                     }
                 }
             },
             methods: {
-                TruncateText(text, threshold)
-                {
+                TruncateText(text, threshold) {
                     if (text.length > threshold)
                         return text.substring(0, threshold) + "...";
                     else
                         return text;
+                },
+                openUpdate(transaction) {
+                    this.update = JSON.parse(JSON.stringify(transaction));
+                    this.update.negative = transaction.amount < 0;
+                    this.update.amount = Math.abs(transaction.amount).toFixed(2);
+
+                    const modal = new mdb.Modal(document.getElementById('updateModal'));
+                    modal.show();
+                },
+                openDelete(transaction) {
+                    this.delete.id = JSON.parse(JSON.stringify(transaction.id));
+
+                    // hide update modal
+                    const updateModal = mdb.Modal.getInstance(document.getElementById('updateModal'));
+                    updateModal?.hide();
+
+                    const modal = new mdb.Modal(document.getElementById('deleteModal'));
+                    modal.show();
                 },
                 // Fetch user image from server /users/@me
                 async fetchUser() {
@@ -476,11 +688,25 @@
                         });
                 },
                 async fetchTransactions() {
-                    await fetch('/api/transactions/@me')
+                    const params = new URLSearchParams();
+
+                    // add filters to params that are not null
+                    if (this.filters.page)
+                        params.append('page', this.filters.page);
+                    if (this.filters.category)
+                        params.append('category', this.filters.category);
+                    if (this.filters.type)
+                        params.append('type', this.filters.type);
+                    if (this.filters.date_span)
+                        params.append('date_span', this.filters.date_span);
+                    if (this.filters.search)
+                        params.append('search', this.filters.search);
+
+                    await fetch('/api/transactions/@me' + '?' + params.toString())
                         .then(response => response.json())
                         .then(data => {
-                            this.transactions = data;
-                            this.totalPages = Math.ceil(this.transactions.length / 10);
+                            this.transactions = data.expenses;
+                            this.totalPages = Math.ceil(data.totalPages / 10);
                         });
                 },
                 async fetchCategories() {
@@ -497,54 +723,49 @@
                             this.payees = data;
                         });
                 },
-                async createTransaction()
-                {
+                async createTransaction() {
                     let payee = document.getElementById("create_payer").value;
                     let category = document.getElementById("create_category").value;
                     let description = document.getElementById("create_description").value;
                     let amount = document.getElementById("create_amount").value;
                     let date = document.getElementById("create_date").value;
 
-                    let modal = new mdb.Toast(document.getElementById('liveToast'));
+                    let toast = new mdb.Toast(document.getElementById('liveToast'));
 
-                    if (payee.trim().length < 1)
-                    {
-                        this.modal.title = "Errore";
-                        this.modal.message = "Il nome del beneficiario è obbligatorio";
-                        this.modal.classes = ['me-auto', 'text-danger'];
-                        modal.show();
+                    if (payee.trim().length < 1) {
+                        this.toast.title = "Errore";
+                        this.toast.message = "Il nome del beneficiario è obbligatorio";
+                        this.toast.classes = ['me-auto', 'text-danger'];
+                        toast.show();
                         return;
                     }
 
-                    if (category.trim().length < 1)
-                    {
-                        this.modal.title = "Errore";
-                        this.modal.message = "La categoria è obbligatoria";
-                        this.modal.classes = ['me-auto', 'text-danger'];
-                        modal.show();
+                    if (category.trim().length < 1) {
+                        this.toast.title = "Errore";
+                        this.toast.message = "La categoria è obbligatoria";
+                        this.toast.classes = ['me-auto', 'text-danger'];
+                        toast.show();
                         return;
                     }
 
-                    if (amount.trim().length < 1 || amount <= 0 || isNaN(amount))
-                    {
-                        this.modal.title = "Errore";
-                        this.modal.message = "L'importo deve essere maggiore di zero";
-                        this.modal.classes = ['me-auto', 'text-danger'];
-                        modal.show();
+                    if (amount.trim().length < 1 || amount <= 0 || isNaN(amount)) {
+                        this.toast.title = "Errore";
+                        this.toast.message = "L'importo deve essere maggiore di zero";
+                        this.toast.classes = ['me-auto', 'text-danger'];
+                        toast.show();
                         return;
                     }
 
-                    if (date.trim().length < 1 || isNaN(Date.parse(date)))
-                    {
-                        this.modal.title = "Errore";
-                        this.modal.message = "La data è obbligatoria";
-                        this.modal.classes = ['me-auto', 'text-danger'];
-                        modal.show();
+                    if (date.trim().length < 1 || isNaN(Date.parse(date))) {
+                        this.toast.title = "Errore";
+                        this.toast.message = "La data è obbligatoria";
+                        this.toast.classes = ['me-auto', 'text-danger'];
+                        toast.show();
                         return;
                     }
 
                     amount = this.insert.negative ? -amount : amount;
-                    
+
                     let transaction = {
                         payee: payee,
                         category: category,
@@ -560,32 +781,170 @@
                         },
                         body: JSON.stringify(transaction),
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status >= 200 && data.status < 300)
-                        {
-                            this.modal.title = "Successo";
-                            this.modal.message = "Transazione inserita con successo";
-                            this.modal.classes = ['me-auto', 'text-success'];
-                            modal.show();
-                            this.fetchTransactions();
-                        }
-                        else
-                        {
-                            this.modal.title = "Errore";
-                            this.modal.message = data.message;
-                            this.modal.classes = ['me-auto', 'text-danger'];
-                            modal.show();
-                        }
-                    });
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.error) {
+                                this.toast.title = "Successo";
+                                this.toast.message = "Transazione inserita con successo";
+                                this.toast.classes = ['me-auto', 'text-success'];
+                                toast.show();
+                                // reset modal
+                                document.getElementById("create_payer").value = "";
+                                document.getElementById("create_category").value = "";
+                                document.getElementById("create_description").value = "";
+                                document.getElementById("create_amount").value = "";
+                                document.getElementById("create_date").value = "";
+                                this.insert.negative = true;
+
+                                // hide modal
+                                var createModal = document.getElementById('createModal');
+                                mdb.Modal.getInstance(createModal).hide();
+
+                                this.fetchTransactions();
+                            }
+                            else {
+                                this.toast.title = "Errore";
+                                this.toast.message = data.error;
+                                this.toast.classes = ['me-auto', 'text-danger'];
+                                toast.show();
+                            }
+                        });
 
                 },
+                async updateTransaction() {
+                    let payee = document.getElementById("update_payer").value;
+                    let category = document.getElementById("update_category").value;
+                    let description = document.getElementById("update_description").value;
+                    let amount = document.getElementById("update_amount").value;
+                    let date = document.getElementById("update_date").value;
+
+                    let toast = new mdb.Toast(document.getElementById('liveToast'));
+
+                    if (payee.trim().length < 1) {
+                        this.toast.title = "Errore";
+                        this.toast.message = "Il nome del beneficiario è obbligatorio";
+                        this.toast.classes = ['me-auto', 'text-danger'];
+                        toast.show();
+                        return;
+                    }
+
+                    if (category.trim().length < 1) {
+                        this.toast.title = "Errore";
+                        this.toast.message = "La categoria è obbligatoria";
+                        this.toast.classes = ['me-auto', 'text-danger'];
+                        toast.show();
+                        return;
+                    }
+
+                    if (amount.trim().length < 1 || amount <= 0 || isNaN(amount)) {
+                        this.toast.title = "Errore";
+                        this.toast.message = "L'importo deve essere maggiore di zero";
+                        this.toast.classes = ['me-auto', 'text-danger'];
+                        toast.show();
+                        return;
+                    }
+
+                    if (date.trim().length < 1 || isNaN(Date.parse(date))) {
+                        this.toast.title = "Errore";
+                        this.toast.message = "La data è obbligatoria";
+                        this.toast.classes = ['me-auto', 'text-danger'];
+                        toast.show();
+                        return;
+                    }
+
+                    amount = this.update.negative ? -amount : amount;
+
+                    let transaction = {
+                        payee: payee,
+                        category: category,
+                        description: description,
+                        amount: amount,
+                        date: date,
+                    };
+
+                    await fetch('/api/transactions/@me/' + this.update.id, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(transaction),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.error) {
+                                this.toast.title = "Successo";
+                                this.toast.message = "Transazione aggiornata con successo";
+                                this.toast.classes = ['me-auto', 'text-success'];
+                                toast.show();
+                                // reset modal
+                                document.getElementById("update_payer").value = "";
+                                document.getElementById("update_category").value = "";
+                                document.getElementById("update_description").value = "";
+                                document.getElementById("update_amount").value = "";
+                                document.getElementById("update_date").value = "";
+                                this.update.negative = true;
+
+                                // hide modal
+                                var updateModal = document.getElementById('updateModal');
+                                mdb.Modal.getInstance(updateModal).hide();
+
+                                this.fetchTransactions();
+                            }
+                            else {
+                                this.toast.title = "Errore";
+                                this.toast.message = data.error;
+                                this.toast.classes = ['me-auto', 'text-danger'];
+                                toast.show();
+                            }
+                        });
+                },
+                async deleteTransaction() {
+                    let toast = new mdb.Toast(document.getElementById('liveToast'));
+                    await fetch('/api/transactions/@me/' + this.delete.id, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.error) {
+                                this.toast.title = "Successo";
+                                this.toast.message = "Transazione eliminata con successo";
+                                this.toast.classes = ['me-auto', 'text-success'];
+                                toast.show();
+
+                                // hide modal
+                                var deleteModal = document.getElementById('deleteModal');
+                                mdb.Modal.getInstance(deleteModal).hide();
+
+                                this.fetchTransactions();
+                            }
+                            else {
+                                this.toast.title = "Errore";
+                                this.toast.message = data.error;
+                                this.toast.classes = ['me-auto', 'text-danger'];
+                                toast.show();
+                            }
+                        });
+                },
             },
-            mounted() {
-                this.fetchUser();
-                this.fetchTransactions();
-                this.fetchCategories();
-                this.fetchPayees();
+            watch: {
+                currentPage: function (val) {
+                    this.filters.page = val;
+                },
+                filters: {
+                    handler: function (val) {
+                        this.fetchTransactions();
+                    },
+                    deep: true,
+                },
+            },
+            async mounted() {
+                await this.fetchUser();
+                await this.fetchTransactions();
+                await this.fetchCategories();
+                await this.fetchPayees();
             }
 
         }).mount('#app')
