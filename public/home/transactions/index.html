@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" class="d-none">
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <!-- Container wrapper -->
@@ -56,10 +56,8 @@
                         <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
                             id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown"
                             aria-expanded="false">
-                            <object :data="user.picture" type="image/png" class="rounded-circle" style="height: 30px;"
-                                loading="lazy">
-                                <img src="/assets/default_user.png" class="rounded-circle" style="height: 30px;"
-                                    loading="lazy" />
+                            <object :data="user.picture" type="image/png" class="rounded-circle" style="height: 30px; pointer-events: none;" loading="lazy" referrerpolicy="no-referrer">
+                                <img src="/assets/default_user.png" class="rounded-circle" style="height: 30px;" loading="lazy" />
                             </object>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
@@ -945,6 +943,8 @@
                 await this.fetchTransactions();
                 await this.fetchCategories();
                 await this.fetchPayees();
+
+                document.getElementById("app").classList.remove("d-none");
             }
 
         }).mount('#app')

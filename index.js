@@ -99,12 +99,12 @@ app.get('/auth/google', passport.authenticate('google', {
     scope: ['profile', 'email']
 }));
 
-app.get('/auth/google/callback', passport.authenticate('google', 
-{
-    failureRedirect: '/?error=true'
-}), (req, res) => {
-    res.redirect('/home');
-});
+app.get('/auth/google/callback', passport.authenticate('google',
+    {
+        failureRedirect: '/?error=true'
+    }), (req, res) => {
+        res.redirect('/home');
+    });
 
 // auth middleware
 const auth = (req, res, next) => {
@@ -144,13 +144,10 @@ app.get('/assets/default_user.png', (req, res) => {
     res.sendFile(path.join(dir, file));
 });
 
-
-
-
 // Api
 
 // Protect api routes
-app.use('/api', auth, express.json());
+app.use('/api/*', auth, express.json());
 
 // Get /api/users/@me
 app.get('/api/users/@me', async (req, res) => {
@@ -188,8 +185,7 @@ app.get('/api/transactions/@me', async (req, res) => {
             filters.push('amount >= ?');
             params.push(0);
             countParams.push(0);
-        } else
-        {
+        } else {
             filters.push('amount <= ?');
             params.push(0);
             countParams.push(0);
@@ -230,7 +226,7 @@ app.get('/api/transactions/@me', async (req, res) => {
     }
 
     if (search) {
-        filters.push('description LIKE ? OR payee LIKE ?');
+        filters.push('(description LIKE ? OR payee LIKE ?)');
         params.push(`%${search}%`, `%${search}%`);
         countParams.push(`%${search}%`, `%${search}%`);
     }
@@ -293,7 +289,7 @@ app.get('/api/categories/@me', async (req, res) => {
         'Travel',
         'Education'
     ];
-    
+
     const db = await _db;
     const categories = await db.all('SELECT DISTINCT category FROM expenses WHERE user_id = ?', req.user.id);
 
@@ -401,10 +397,10 @@ app.get('/api/payees/@me', async (req, res) => {
         "Lottomatica",
         "SuperEnalotto",
     ];
-    
+
     const db = await _db;
     const payees = await db.all('SELECT DISTINCT payee FROM expenses WHERE user_id = ?', req.user.id);
-    
+
     // combine arrays and remove duplicates
     const combined = [...new Set([...payees.map(p => p.payee), ...defaultPayees])];
 
@@ -480,5 +476,55 @@ app.delete('/api/transactions/@me/:id', async (req, res) => {
         res.status(200).json({ id: req.params.id });
     } else {
         res.status(500).json({ error: 'Something went wrong, please try again later...' });
+    }
+});
+
+app.get('/api/stats/@me', async (req, res) => {
+    const db = await _db;
+    const userId = req.user.id;
+
+    const categoryQuery = `
+    SELECT category, SUM(amount) AS total_amount
+    FROM expenses
+    WHERE user_id = ? AND date >= date('now', '-12 months')
+    GROUP BY category`;
+
+    const monthlyExpensesQuery = `
+    SELECT strftime('%Y-%m', date) AS month, SUM(amount) AS total_amount
+    FROM expenses
+    WHERE user_id = ? AND date >= date('now', '-12 months')
+    GROUP BY month
+    ORDER BY month`;
+
+    const monthlyIncomeQuery = `
+    SELECT strftime('%Y-%m', date) AS month, SUM(amount) AS total_amount
+    FROM expenses
+    WHERE user_id = ? AND amount > 0 AND date >= date('now', '-12 months')
+    GROUP BY month
+    ORDER BY month`;
+
+    const weeklyTransactionsQuery = `
+    SELECT strftime('%w', date) AS day_of_week, COUNT(*) AS transaction_count
+    FROM expenses
+    WHERE user_id = ? AND date >= date('now', '-12 months')
+    GROUP BY day_of_week
+    ORDER BY day_of_week`;
+
+    try {
+        const category = await db.all(categoryQuery, userId);
+        const monthlyExpenses = await db.all(monthlyExpensesQuery, userId);
+        const monthlyIncome = await db.all(monthlyIncomeQuery, userId);
+        const weeklyTransactions = await db.all(weeklyTransactionsQuery, userId);
+
+        const stats = {
+            category,
+            monthlyExpenses,
+            monthlyIncome,
+            weeklyTransactions,
+        };
+
+        res.json(stats);
+    } catch (error) {
+        res.status(500).json({ error: 'Error retrieving stats data' });
     }
 });

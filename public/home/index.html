@@ -16,7 +16,7 @@
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" class="d-none">
         <!-- Navbar -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <!-- Container wrapper -->
@@ -58,8 +58,10 @@
                         <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
                             id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown"
                             aria-expanded="false">
-                            <object :data="user.picture" type="image/png" class="rounded-circle" height="30" loading="lazy">
-                                <img src="/assets/default_user.png" class="rounded-circle" height="30" loading="lazy" /> 
+                            <object :data="user.picture" type="image/png" class="rounded-circle"
+                                style="height: 30px; pointer-events: none;" loading="lazy" referrerpolicy="no-referrer">
+                                <img src="/assets/default_user.png" class="rounded-circle" style="height: 30px;"
+                                    loading="lazy" />
                             </object>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
@@ -82,29 +84,37 @@
 
         <!-- Horizontally aligned div -->
         <div class="container overflow-hidden p-5">
-            <div class="row g-5">
-                <div class="col-12 col-md-6">
-                    <div style="height:25vh">
-                        <canvas class="my_chart"></canvas>
-                    </div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <div style="height:25vh">
-                        <canvas class="my_chart"></canvas>
-                    </div>
-                </div>
+            <div class="mb-5 text-center">
+                <h1>Benvenuto {{ user.name }} su PiggyPocket</h1>
+                <h5>Vai nella pagina Transazioni per aggiungere dati</h5>
             </div>
-            <div class="row g-5">
-                <div class="col-12 col-md-6">
+            <div id="chartContainer" class="row g-4 row-cols-md-2 row-cols-1">
+                <div class="col">
+                    <div class="border rounded p-4" style="height:40vh">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="border rounded p-4" style="height:40vh">
+                        <canvas id="monthlyExpensesChart"></canvas>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="border rounded p-4" style="height:40vh">
+                        <canvas id="monthlyIncomeChart"></canvas>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="border rounded p-4" style="height:40vh">
+                        <canvas id="weeklyTransactionsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- <div class="col">
                     <div style="height:25vh">
                         <canvas class="my_chart"></canvas>
                     </div>
-                </div>
-                <div class="col-12 col-md-6">
-                    <div style="height:25vh">
-                        <canvas class="my_chart"></canvas>
-                    </div>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -126,13 +136,14 @@
                         .then(response => response.json())
                         .then(data => {
                             this.user = data;
-                            if (!user.picture)
-                                user.picture = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png";
+                            if (!this.user.picture)
+                                this.user.picture = "/assets/default_user.png";
                         });
-                }
+                },
             },
-            mounted() {
-                this.fetchUser();
+            async mounted() {
+                await this.fetchUser();
+                document.getElementById('app').classList.remove('d-none');
             }
 
         }).mount('#app')
@@ -140,9 +151,6 @@
     </script>
 
     <script>
-        
- 
-
 
         const ctxs = document.querySelectorAll('.my_chart');
 
@@ -159,7 +167,7 @@
 
 
         ctxs.forEach(ctx => {
-            newChart(ctx, 'line', data);
+            newChart(ctx, 'line', data, 'Titolo');
         });
 
         // ctxs.forEach(ctx => {
@@ -182,8 +190,7 @@
         //     });
         // });
 
-        function newChart(element, type, data, title)
-        {
+        function newChart(element, type, data, title) {
             new Chart(element, {
                 type: type,
                 data: data,
@@ -196,12 +203,125 @@
                             title: {
                                 display: title ? true : false,
                                 text: title
-                            }   
+                            }
                         }
                     }
                 }
             });
         }
+
+        // fetch /api/stats/@me
+        fetch('/api/stats/@me')
+            .then(response => response.json())
+            .then(data => {
+                const { category, monthlyExpenses, monthlyIncome, weeklyTransactions } = data;
+
+                const chartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    redraw: true,
+                    plugins: {
+                        legend: {
+                            title: {
+                                display: true,
+                                text: '',
+                                font: {
+                                    size: 24
+                                }
+                            }
+                        }
+                    },
+                };
+
+                // Create Category Chart
+                // set title
+                chartOptionsCategory = JSON.parse(JSON.stringify(chartOptions));
+                chartOptionsCategory.plugins.legend.title.text = 'Spese per categoria';
+                chartOptionsCategory.plugins.tooltip = {callbacks: {label: (c) => ' ' + c.formattedValue + ' €'}};
+                const categoryChartCanvas = document.getElementById('categoryChart').getContext('2d');
+                const categoryChart = new Chart(categoryChartCanvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: category.map(item => item.category),
+                        datasets: [{
+                            data: category.map(item => Math.abs(item.total_amount)),
+                            backgroundColor: ['#FC72A5', '#FCA972', '#FCFC72', '#A9FC72', '#72FC72', '#72FCA9', '#72FCFC', '#72A9FC', '#7272FC', '#A972FC', '#FC72FC', '#FC72A9'],
+                            borderColor: '#FC72A5',
+                            tension: 0.3
+                        }]
+                    },
+                    options: chartOptionsCategory
+                });
+
+                // Create Monthly Expenses Chart
+                chartOptionsMonthlyExpenses = JSON.parse(JSON.stringify(chartOptions));
+                chartOptionsMonthlyExpenses.scales = { y: { ticks: { callback: (v) => v + ' €' } } };
+                chartOptionsMonthlyExpenses.plugins.tooltip = {callbacks: {label: (c) => ' ' + c.formattedValue + ' €'}};
+                chartOptionsMonthlyExpenses.plugins.legend.title.text = 'Spese per mese';
+                const monthlyExpensesChartCanvas = document.getElementById('monthlyExpensesChart').getContext('2d');
+                const monthlyExpensesChart = new Chart(monthlyExpensesChartCanvas, {
+                    type: 'line',
+                    data: {
+                        labels: monthlyExpenses.map(item => item.month),
+                        datasets: [{
+                            label: 'Spese mensili',
+                            data: monthlyExpenses.map(item => Math.abs(item.total_amount)),
+                            backgroundColor: '#FC72A5',
+                            borderColor: '#FC72A5',
+                            tension: 0.3
+                        }]
+                    },
+                    options: chartOptionsMonthlyExpenses
+                });
+
+                // Create Monthly Income Chart
+                chartOptionsMonthlyIncome = JSON.parse(JSON.stringify(chartOptions));
+                chartOptionsMonthlyIncome.scales = { y: { ticks: { callback: (v) => v + ' €' } } };
+                chartOptionsMonthlyIncome.plugins.tooltip = {callbacks: {label: (c) => ' ' + c.formattedValue + ' €'}};
+                chartOptionsMonthlyIncome.plugins.legend.title.text = 'Entrate per mese';
+                const monthlyIncomeChartCanvas = document.getElementById('monthlyIncomeChart').getContext('2d');
+                const monthlyIncomeChart = new Chart(monthlyIncomeChartCanvas, {
+                    type: 'line',
+                    data: {
+                        labels: monthlyIncome.map(item => item.month),
+                        datasets: [{
+                            label: 'Entrate mensili',
+                            data: monthlyIncome.map(item => item.total_amount),
+                            backgroundColor: '#FC72A5',
+                            borderColor: '#FC72A5',
+                            tension: 0.3
+                        }]
+                    },
+                    options: chartOptionsMonthlyIncome
+                });
+
+                // Create Weekly Transactions Chart
+                chartOptionsWeeklyTransactions = JSON.parse(JSON.stringify(chartOptions));
+                chartOptionsWeeklyTransactions.plugins.legend.title.text = 'Numero di transazioni per giorno della settimana';
+
+                console.log(weeklyTransactions);
+                const wtData = [0, 0, 0, 0, 0, 0, 0];
+                weeklyTransactions.forEach(item => {
+                    let day = item.day_of_week > 0 ? item.day_of_week - 1 : 6;
+                    wtData[day] = item.transaction_count;
+                });
+
+                const weeklyTransactionsChartCanvas = document.getElementById('weeklyTransactionsChart').getContext('2d');
+                const weeklyTransactionsChart = new Chart(weeklyTransactionsChartCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                        datasets: [{
+                            label: 'Transazioni',
+                            data: wtData,
+                            backgroundColor: '#FC72A5',
+                            borderColor: '#FC72A5',
+                            tension: 0.3
+                        }]
+                    },
+                    options: chartOptionsWeeklyTransactions
+                });
+            });
     </script>
 
 </body>
