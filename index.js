@@ -693,16 +693,19 @@ app.post('/api/reports/@me/:yearmonth', async (req, res) => {
 
     let aiResponse = {};
 
-    // fetch localhost:8824/api/prompt with post method passing prompt as json
+    // fetch gptServer with post method passing prompt as json
+
+    let gptServer = process.env.GPT_SERVER || 'http://localhost:8824';
+
     try {
-        aiResponse = await fetch('http://localhost:8824/api/prompt', {
+        aiResponse = await fetch(`${gptServer}/api/prompt`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ prompt: prompt }),
         }).then(res => res.json());
 
         while (aiResponse.response == 'Unable to fetch the response, Please try again.') {
-            aiResponse = await fetch('http://localhost:8824/api/prompt', {
+            aiResponse = await fetch(`${gptServer}/api/prompt`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ prompt: prompt }),
