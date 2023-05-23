@@ -21,6 +21,36 @@ La documentazione completa delle API di PiggyPocket è disponibile nel file [API
 
 **[Apri la documentazione delle API](API.md)**
 
+## Configurazione del server GPT
+
+PiggyPocket richiede un server GPT (Generative Pre-trained Transformer) per l'elaborazione del linguaggio naturale al fine di generare i rapporti personalizzati. Prima di eseguire l'applicazione, è necessario configurare il server GPT in modo che risponda all'endpoint `POST /api/prompt` con un oggetto JSON che contiene una proprietà `response` corrispondente alla risposta generata da GPT.
+
+Ecco come configurare il server GPT per integrarlo con PiggyPocket:
+
+1. Installa il server GPT sul tuo ambiente locale o su un server remoto seguendo le istruzioni fornite dal fornitore o dal progetto GPT che stai utilizzando.
+2. Assicurati che il server GPT sia avviato correttamente e che sia raggiungibile tramite un endpoint API.
+3. Configura l'URL del server GPT nell'applicazione PiggyPocket modificando la variabile d'ambiente `GPT_SERVER` nel file `.env`.
+
+   ```
+   GPT_SERVER=http://indirizzo_del_tuo_server_gpt
+   ```
+
+   Sostituisci `http://indirizzo_del_tuo_server_gpt` con l'URL effettivo del server GPT.
+
+4. Verifica che il server GPT risponda all'endpoint `POST /api/prompt` con un oggetto JSON che contiene una proprietà `response`. Questa proprietà rappresenterà la risposta generata da GPT basandosi sul prompt fornito.
+
+   Esempio di risposta corretta del server GPT:
+
+   ```json
+   {
+     "response": "La tua risposta generata da GPT."
+   }
+   ```
+
+   Assicurati che il server GPT sia configurato correttamente per rispondere in questo formato.
+
+Una volta configurato correttamente il server GPT e l'applicazione PiggyPocket con l'URL del server GPT, sarai in grado di generare rapporti personalizzati utilizzando l'intelligenza artificiale del server GPT.
+
 ## Installazione
 
 Per installare PiggyPocket sul tuo ambiente locale, segui questi passaggi:
