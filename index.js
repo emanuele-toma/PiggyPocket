@@ -185,6 +185,7 @@ app.delete('/auth/delete', auth, async (req, res) => {
     const db = await _db;
     await db.run('DELETE FROM users WHERE id = ?', req.user.id);
     await db.run('DELETE FROM expenses WHERE user_id = ?', req.user.id);
+    await db.run('DELETE FROM reports WHERE user_id = ?', req.user.id);
     req.logout((err) => {
         if (err) return next(err);
     });
