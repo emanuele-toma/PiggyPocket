@@ -15,6 +15,21 @@ PiggyPocket ti permette di registrare le tue transazioni finanziarie, organizzar
 - Gestione del budget mensile
 - Interfaccia utente intuitiva e facile da usare
 
+## Utilizzo
+
+Nella pagina principale /home si possono vedere dei grafici che rappresentano alcuni informazioni sulle transazioni eseguite.
+Per poter aggiungere nuove transazioni bisogna andare nella pagina transazioni.
+
+Nella pagina transazioni poi bisogna cliccare su "Aggiungi transazione" (Da mobile bisogna aprire il menu), inoltre si possono anche aggiungere dei filtri per poter filtrare le transazioni.
+
+Per modificare una transazione si può cliccare il pulsante apposta (da mobile bisogna cliccare sulla transazione)
+
+Stessa cosa per eliminare una transazione.
+
+Nella pagina riepilogo mensile si può vedere un riepilogo mese per mese delle transazioni effettuate e, se configurato, cliccando su un riepilogo si può far generare un report tramite GPT che analizza le spese.
+
+Nella pagina impostazioni si possono vedere i dati dell'utente, si possono esportare i dati in formato JSON, si possono aggiungere delle transazioni preimpostate e si può eliminare l'account.
+
 ## Documentazione API
 
 La documentazione completa delle API di PiggyPocket è disponibile nel file [API.md](API.md). Questo file fornisce dettagli su tutti gli endpoint API disponibili, i parametri richiesti, le risposte attese e altre informazioni importanti per l'integrazione con l'applicazione.
