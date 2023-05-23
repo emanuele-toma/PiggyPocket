@@ -531,12 +531,11 @@
 
                     </div>
                     <div class="modal-footer d-flex justify-content-between">
-                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
+                        <button type="button" class="btn btn-secondary d-none d-lg-block" data-mdb-dismiss="modal">
                             Annulla
                         </button>
+                        <button @click="openDelete(update)" type="button" class="btn btn-danger me-2 d-lg-none">Elimina</button>
                         <div>
-                            <button @click="openDelete(update)" type="button"
-                                class="btn btn-danger me-2">Elimina</button>
                             <button @click="updateTransaction" type="button" class="btn btn-primary">Modifica</button>
                         </div>
                     </div>
