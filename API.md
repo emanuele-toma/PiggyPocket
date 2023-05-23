@@ -4,6 +4,8 @@ Per accedere alle risorse protette dell'API di PiggyPocket, gli utenti devono au
 
 Il processo di autenticazione combinato accetta un token di autenticazione fornito dall'utente attraverso l'header della richiesta (`Authorization`) o il corpo della richiesta (`token`).
 
+Il token di autenticazione si può ottenere tramite la pagina impostazioni dell'utente.
+
 Ecco come effettuare l'autenticazione:
 
 1. Includi il token di autenticazione nella richiesta utilizzando uno dei seguenti metodi:
