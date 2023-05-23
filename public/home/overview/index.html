@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/mdb.min.css">
+    <script src="/js/mdb.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>PiggyPocket - Home</title>
+</head>
+
+<body>
+    <div id="app" class="d-none">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <!-- Container wrapper -->
+            <div class="container-fluid">
+                <!-- Toggle button -->
+                <button @click="collapseClosed = !collapseClosed" class="navbar-toggler" type="button"
+                    data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Collapsible wrapper -->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Navbar brand -->
+                    <a class="navbar-brand mt-2 mt-lg-0" href=".">
+                        <img class="me-2" src="/assets/favicon.png" height="30" alt="Logo" loading="lazy" />
+                        PiggyPocket
+                    </a>
+                    <!-- Left links -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/home/">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/home/transactions">Transazioni</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/home/overview">Riepilogo mensile</a>
+                        </li>
+                    </ul>
+                    <!-- Left links -->
+                </div>
+                <!-- Collapsible wrapper -->
+
+                <!-- Right elements -->
+                <div class="d-flex align-items-center" v-if="collapseClosed">
+                    <!-- Avatar -->
+                    <div class="dropdown">
+                        <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
+                            id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown"
+                            aria-expanded="false">
+                            <object :data="user.picture" type="image/png" class="rounded-circle"
+                                style="height: 30px; pointer-events: none;" loading="lazy" referrerpolicy="no-referrer">
+                                <img src="/assets/default_user.png" class="rounded-circle" style="height: 30px;"
+                                    loading="lazy" />
+                            </object>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                            <li>
+                                <a class="dropdown-item" href="/home/settings"><i
+                                        class="fas fa-gear me-2"></i>Impostazioni</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/logout"><i
+                                        class="fas fa-arrow-right-from-bracket me-2"></i>Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Right elements -->
+            </div>
+            <!-- Container wrapper -->
+        </nav>
+        <!-- Navbar -->
+
+        <!-- Horizontally aligned div -->
+        <div class="container overflow-hidden p-5">
+            <div v-for="transaction in transactionCount" class="card shadow-4-strong mb-3">
+                <div @click="openReport(transaction.month)" class="card-body lh-sm">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="d-flex align-items-center">
+                                <div class="ms-3">
+                                    <p class="fw-bold mb-1">{{monthNumberToName(transaction.month.split('-')[1])}} {{transaction.month.split('-')[0]}}</p>
+                                    <p class="text-muted mb-0">{{transaction.total_count}} transazion{{transaction.total_count == 1 ? 'e' : 'i'}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center text-end">
+                            <div>
+                                <p class="fw-bold mb-1 text-danger">
+                                    - {{ Math.abs(totalExpenses.find(e => e.month == transaction.month) ? totalExpenses.find(e => e.month == transaction.month).total_amount : 0) }} €
+                                </p>
+                                <p class="fw-bold mb-1 text-success">
+                                    + {{ Math.abs(totalIncome.find(e => e.month == transaction.month) ? totalIncome.find(e => e.month == transaction.month).total_amount : 0) }} €
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="transactionCount.length == 0" class="card shadow-4-strong">
+                <div class="card-body">
+                    <h5 class="card-title">Non ci sono transazioni da mostrare :(</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal top fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true"
+            data-mdb-backdrop="true" data-mdb-keyboard="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 v-if="currentReport.month" class="modal-title" id="reportModalLabel"><img class="me-2" src="/assets/favicon.png" height="30"
+                                alt="Logo" loading="lazy" /> Report {{monthNumberToName(currentReport.month.split('-')[1])}} {{currentReport.month.split('-')[0]}} </h5>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Analisi delle spese tramite IA</h5>
+                        <textarea class="form-control mt-3" id="report-textarea" rows="10" readonly>{{currentReport.content || 'Analisi non ancora effettuata'}}</textarea>
+                        <!-- Div with warning class containing text that says content is generated by ai and may not be accurate -->
+                        <div v-if="currentReport.content" class="alert alert-warning mt-3 mb-0" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i> Questo report è stato generato da un algoritmo di intelligenza artificiale e potrebbe non essere accurato.
+                        </div>
+                    </div>
+
+                    <div class="modal-footer d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
+                            Annulla
+                        </button>
+                        <div>
+                            <button @click="createReport" type="button" class="btn btn-primary" :disabled="loading == true">
+                                <span v-if="loading == false">Crea report</span>
+                                <div v-else class="spinner-border spinner-border-sm" role="status">
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+            <div id="liveToast" class="toast border" role="alert" aria-live="assertive" aria-atomic="true"
+                data-mdb-delay="6000">
+                <div class="toast-header">
+                    <img class="me-2" src="/assets/favicon.png" alt="Logo" loading="lazy" style="height: 30px;" />
+                    <strong :class="toast.classes.join(' ')">{{ toast.title }}</strong>
+                    <button type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body border-top bg">
+                    {{ toast.message }}
+                </div>
+            </div>
+        </div>
+        
+        <!-- /Toast -->
+
+    </div>
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    user: {},
+                    collapseClosed: true,
+                    totalExpenses: {},
+                    totalIncome: {},
+                    transactionCount: {},
+                    currentReport: {
+                        month: null,
+                        content: null
+                    },
+                    loading: false,
+                    toast:
+                    {
+                        title: "PiggyPocket",
+                        message: "",
+                        classes: ['me-auto'],
+                    },
+                }
+            },
+            methods: {
+                monthNumberToName(n)
+                {
+                    // convert n which is a number to a month name
+                    const date = new Date();
+                    date.setMonth(n - 1);
+                    let month = date.toLocaleString('default', { month: 'long' });
+                    return month.charAt(0).toUpperCase() + month.slice(1);
+                },
+                async fetchUser() {
+                    await fetch('/api/users/@me')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.user = data;
+                            if (!this.user.picture)
+                                this.user.picture = "/assets/default_user.png";
+                        });
+                },
+                async fetchOverview()
+                {
+                    await fetch('/api/overview/@me')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.totalExpenses = data.totalExpenses;
+                            this.totalIncome = data.totalIncome;
+                            this.transactionCount = data.transactionCount;
+                        });
+                },
+                async fetchReport(yearmonth)
+                {
+                    await fetch('/api/reports/@me/' + yearmonth)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.currentReport.month = yearmonth;
+                            this.currentReport.content = data.content;
+                        });
+                },
+                async openReport(yearmonth)
+                {
+                    await this.fetchReport(yearmonth);
+                    const modal = new mdb.Modal(document.getElementById('reportModal'));
+                    modal.show();
+                },
+                async createReport()
+                {
+                    this.loading = true;
+                    await fetch('/api/reports/@me/' + this.currentReport.month, {
+                        method: 'POST'
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            this.loading = false;
+
+                            if(data.error)
+                            {
+                                this.toast.classes = ['me-auto', 'text-danger'];
+                                this.toast.title = "Errore";
+                                this.toast.message = "Si è verificato un errore durante la creazione del report."
+                                const toast = new mdb.Toast(document.getElementById('liveToast'));
+                                toast.show();
+                                return;
+                            }
+
+                            this.currentReport.content = data.content;
+                        });
+                }
+            },
+            async mounted() {
+                this.fetchUser();
+                this.fetchOverview();
+                document.getElementById('app').classList.remove('d-none');
+            }
+
+        }).mount('#app')
+
+    </script>
+</body>
+
+</html>

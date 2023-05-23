@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/mdb.min.css">
+    <script src="/js/mdb.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Use fontawesome for accordion icon. change it to info icon -->
+    <style>
+        .accordion-button.collapsed::after {
+            /* Set fontawesome info icon */
+            font-family: "Font Awesome 5 Free";
+            content: "\F05A";
+            background: none;
+
+            font-weight: 900;
+
+            /* Disable rotation */
+            transform: none;
+        }
+
+        .accordion-button:not(.collapsed)::after {
+            font-family: "Font Awesome 5 Free";
+            content: "\F05A";
+            background: none;
+
+            font-weight: 900;
+
+            transform: none;
+        }
+    </style>
+
+
+
+    <title>PiggyPocket - Home</title>
+</head>
+
+<body>
+    <div id="app" class="d-none">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <!-- Container wrapper -->
+            <div class="container-fluid">
+                <!-- Toggle button -->
+                <button @click="collapseClosed = !collapseClosed" class="navbar-toggler" type="button"
+                    data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Collapsible wrapper -->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Navbar brand -->
+                    <a class="navbar-brand mt-2 mt-lg-0" href=".">
+                        <img class="me-2" src="/assets/favicon.png" height="30" alt="Logo" loading="lazy" />
+                        PiggyPocket
+                    </a>
+                    <!-- Left links -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/home/">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/home/transactions">Transazioni</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/home/overview">Riepilogo mensile</a>
+                        </li>
+                    </ul>
+                    <!-- Left links -->
+                </div>
+                <!-- Collapsible wrapper -->
+
+                <!-- Right elements -->
+                <div class="d-flex align-items-center" v-if="collapseClosed">
+                    <!-- Avatar -->
+                    <div class="dropdown">
+                        <a class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
+                            id="navbarDropdownMenuAvatar" role="button" data-mdb-toggle="dropdown"
+                            aria-expanded="false">
+                            <object :data="user.picture" type="image/png" class="rounded-circle"
+                                style="height: 30px; pointer-events: none;" loading="lazy" referrerpolicy="no-referrer">
+                                <img src="/assets/default_user.png" class="rounded-circle" style="height: 30px;"
+                                    loading="lazy" />
+                            </object>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+                            <li>
+                                <a class="dropdown-item" href="/home/settings"><i
+                                        class="fas fa-gear me-2"></i>Impostazioni</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/logout"><i
+                                        class="fas fa-arrow-right-from-bracket me-2"></i>Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Right elements -->
+            </div>
+            <!-- Container wrapper -->
+        </nav>
+        <!-- Navbar -->
+
+        <!-- Horizontally aligned div -->
+        <div class="container overflow-hidden p-5">
+            <!-- Create a large card -->
+            <div class="card border border-primary shadow-0 ">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <!-- User image and username -->
+                        <div class="d-flex align-items-center">
+                            <object :data="user.picture" type="image/png" class="rounded-circle"
+                                style="height: 30px; pointer-events: none;" loading="lazy" referrerpolicy="no-referrer">
+                                <img src="/assets/default_user.png" class="rounded-circle" style="height: 30px;"
+                                    loading="lazy" />
+                            </object>
+                            <div class="ms-2">{{user.name}}</div>
+                            <!-- Secondary text saying impostazioni utente -->
+                        </div>
+                    </h5>
+                    <hr>
+                    <!-- Same as above but collapsible for mobile -->
+                    <div class="accordion accordion-flush mt-4 mb-3" id="accordionFlushExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingOne">
+                                <button class="accordion-button collapsed p-0" type="button" data-mdb-toggle="collapse"
+                                    data-mdb-target="#flush-collapseOne" aria-expanded="false"
+                                    aria-controls="flush-collapseOne">
+                                    <div class="fs-5">Impostazioni utente</div>
+                                </button>
+                            </h2>
+                            <div id="flush-collapseOne" class="accordion-collapse collapse"
+                                aria-labelledby="flush-headingOne" data-mdb-parent="#accordionFlushExample">
+                                <div class="accordion-body lh-lg">
+                                    I dettagli dell'account come Nome, Cognome, Email e Immagine del profilo vengono
+                                    automaticamente aggiornati ogni volta che si accede al sito.<br>
+                                    Per modificare i dati dell'account, è necessario modificare i dati del proprio
+                                    account Google.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input for name, email and token -->
+                    <div class="row mb-3">
+                        <div class="col-md-6 col-12">
+                            <label for="name" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="name" v-model="user.name" readonly>
+                        </div>
+                        <div class="col-md-6 col-12 mt-md-0 mt-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="text" class="form-control" id="email" v-model="user.email" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Collapsible explaining section for token -->
+                    <div class="accordion accordion-flush mt-4 mb-3" id="accordionFlushExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingTwo">
+                                <button class="accordion-button collapsed p-0" type="button" data-mdb-toggle="collapse"
+                                    data-mdb-target="#flush-collapseTwo" aria-expanded="false"
+                                    aria-controls="flush-collapseTwo">
+                                    <div class="fs-5">Token API</div>
+                                </button>
+                            </h2>
+                            <div id="flush-collapseTwo" class="accordion-collapse collapse"
+                                aria-labelledby="flush-headingTwo" data-mdb-parent="#accordionFlushExample">
+                                <div class="accordion-body lh-lg">
+                                    Il token API è un codice alfanumerico che permette di accedere ai dati del proprio
+                                    account da applicazioni esterne.<br>
+                                    Il token API è univoco per ogni account e non può essere modificato.<br>
+                                    Per motivi di sicurezza, il token API si può leggere solo una volta.<br>
+                                    <strong>Attenzione:</strong> Rigenerando il token API, tutte le applicazioni
+                                    esterne che utilizzano il vecchio token non potranno più accedere ai dati del
+                                    proprio account.
+                                    <div class="alert alert-warning mt-3" role="alert">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>Non condividere il token API
+                                        con nessuno.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input field with button to re-generate API token -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="token" class="form-label">Token API</label>
+                            <div class="input-group">
+                                <input :type="apiToken ? 'text' : 'password'" class="form-control" id="token" v-model="apiToken" :value="apiToken ? apiToken : 'xxxxxxxxxxxxxxxxxxx'" readonly>
+                                <button @click="newToken" class="btn btn-outline-primary" type="button" id="button-addon2">
+                                    <span class="d-md-block d-none">Genera nuovo token</span>
+                                    <i class="fas fa-sync-alt d-md-none"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Collapsible warning the user -->
+                    <div class="accordion accordion-flush mt-4 mb-3" id="accordionFlushExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingThree">
+                                <button class="accordion-button collapsed p-0" type="button" data-mdb-toggle="collapse"
+                                    data-mdb-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                                    <div class="fs-5">Impostazioni account</div>
+                                </button>
+                            </h2>
+                            <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree"
+                                data-mdb-parent="#accordionFlushExample">
+                                <div class="accordion-body lh-lg">
+                                    <strong>Attenzione:</strong> Eliminando l'account, tutti i dati relativi all'account
+                                    verranno cancellati e non sarà più possibile recuperarli.<br>
+                                    <strong>Attenzione:</strong> Eliminando l'account, tutte le applicazioni esterne
+                                    che utilizzano il token API non potranno più accedere ai dati del proprio account.
+                                    <div class="alert alert-warning mt-3" role="alert">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>Non è possibile annullare
+                                        l'eliminazione dell'account.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-none d-md-flex justify-content-between">
+                        <!-- Export data and delete account -->
+                        <button @click="fetchData" type="button" class="btn btn-outline-primary">
+                            <i class="fas fa-file-export me-2"></i>Esporta dati
+                        </button>
+                        <button @click="openDelete" type="button" class="btn btn-outline-danger">
+                            <i class="fas fa-trash me-2"></i>Elimina account
+                        </button>
+                    </div>
+
+                    <div class="d-flex d-md-none flex-column">
+                        <!-- Export data and delete account -->
+                        <button @click="fetchData" type="button" class="btn btn-outline-primary w-100 mb-3">
+                            <i class="fas fa-file-export me-2"></i>Esporta dati
+                        </button>
+                        <button @click="openDelete" type="button" class="btn btn-outline-danger w-100">
+                            <i class="fas fa-trash me-2"></i>Elimina account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal top fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true"
+            data-mdb-backdrop="true" data-mdb-keyboard="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel"><img class="me-2" src="/assets/favicon.png" height="30"
+                                alt="Logo" loading="lazy" /> Elimina account</h5>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Add message -->
+                        <h5>Sei sicuro di voler eliminare il tuo account?</h5>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
+                            Annulla
+                        </button>
+                        <div>
+                            <button @click="deleteAccount" type="button" class="btn btn-primary">Elimina</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+            <div id="liveToast" class="toast border" role="alert" aria-live="assertive" aria-atomic="true"
+                data-mdb-delay="6000">
+                <div class="toast-header">
+                    <img class="me-2" src="/assets/favicon.png" alt="Logo" loading="lazy" style="height: 30px;" />
+                    <strong :class="toast.classes.join(' ')">{{ toast.title }}</strong>
+                    <button type="button" class="btn-close" data-mdb-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body border-top bg">
+                    {{ toast.message }}
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    user: {},
+                    collapseClosed: true,
+                    apiToken: null,
+                    toast:
+                    {
+                        title: "PiggyPocket",
+                        message: "",
+                        classes: ['me-auto'],
+                    },
+                }
+            },
+            methods: {
+                // Fetch user image from server /users/@me
+                async fetchUser() {
+                    await fetch('/api/users/@me')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.user = data;
+                            if (!this.user.picture)
+                                this.user.picture = "/assets/default_user.png";
+                        });
+                },
+                newToken() {
+                    fetch('/auth/token')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.apiToken = data.token;
+                        });
+                },
+                fetchData() {
+                    fetch('/api/data/@me')
+                        .then(response => response.json())
+                        .then(data => {
+                            // download two file user.json and expenses.json, pretty print
+                            const user = JSON.stringify(data.user, null, 2);
+                            const expenses = JSON.stringify(data.expenses, null, 2);
+                            const reports = JSON.stringify(data.reports, null, 2);
+
+                            // join everything in a single json object
+                            const json = `{"user": ${user}, "expenses": ${expenses}, "reports": ${reports}}`;
+
+                            // download file called piggy-pocket-data.json
+                            const blob = new Blob([json], { type: 'application/json' });
+                            const link = document.createElement('a');
+                            link.href = window.URL.createObjectURL(blob);
+                            link.download = 'piggy-pocket-data.json';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+
+
+                            // show success toast
+                            this.toast.title = "Esportazione completata";
+                            this.toast.message = "I dati sono stati esportati con successo.";
+                            this.toast.classes = ['me-auto', 'text-success'];
+                            const toast = new mdb.Toast(document.getElementById('liveToast'));
+                            toast.show();
+                        });
+                },
+                deleteAccount() {
+                    fetch('/auth/delete', {
+                        method: 'DELETE',
+                    }).then(response => {
+                        if (response.status == 200) {
+                            // show success toast
+                            this.toast.title = "Account eliminato";
+                            this.toast.message = "L'account è stato eliminato con successo.";
+                            this.toast.classes = ['me-auto', 'text-success'];
+                            const toast = new mdb.Toast(document.getElementById('liveToast'));
+                            toast.show();
+                            setTimeout(() => {
+                                window.location.href = "/";
+                            }, 5000);
+                        }
+                    });
+                },
+                openDelete()
+                {
+                    const modal = new mdb.Modal(document.getElementById('deleteModal'));
+                    modal.show();
+                }
+            },
+            async mounted() {
+                await this.fetchUser();
+                document.getElementById('app').classList.remove('d-none');
+            }
+
+        }).mount('#app')
+
+    </script>
+
+</body>
+
+</html>

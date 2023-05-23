@@ -356,7 +356,7 @@
                                         - {{ Math.abs(transaction.amount).toFixed(2) }} €
                                     </p>
                                     <p v-else class="fw-bold mb-1 text-success">
-                                        + {{ transaction.amount.toFixed(2) }}
+                                        + {{ transaction.amount.toFixed(2) }} €
                                     </p>
                                     <p class="text-muted mb-0">
                                         {{ new Date(transaction.date).toLocaleString([], {dateStyle: 'medium'}) }}

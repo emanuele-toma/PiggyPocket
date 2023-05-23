@@ -31,7 +31,7 @@
                 <!-- Collapsible wrapper -->
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Navbar brand -->
-                    <a class="navbar-brand mt-2 mt-lg-0" href="#">
+                    <a class="navbar-brand mt-2 mt-lg-0" href=".">
                         <img class="me-2" src="/assets/favicon.png" height="30" alt="Logo" loading="lazy" />
                         PiggyPocket
                     </a>
@@ -131,8 +131,8 @@
             },
             methods: {
                 // Fetch user image from server /users/@me
-                fetchUser() {
-                    fetch('/api/users/@me')
+                async fetchUser() {
+                    await fetch('/api/users/@me')
                         .then(response => response.json())
                         .then(data => {
                             this.user = data;
@@ -245,7 +245,7 @@
                         labels: category.map(item => item.category),
                         datasets: [{
                             data: category.map(item => Math.abs(item.total_amount)),
-                            backgroundColor: ['#FC72A5', '#FCA972', '#FCFC72', '#A9FC72', '#72FC72', '#72FCA9', '#72FCFC', '#72A9FC', '#7272FC', '#A972FC', '#FC72FC', '#FC72A9'],
+                            backgroundColor: ['#FC72A5', '#FCA972', '#FCFC72', '#A9FC72', '#72FC72', '#72FCA9', '#72FCFC', '#72A9FC', '#7272FC', '#A972FC', '#FC72FC', '#FC72A9', '#FC72A5', '#FCA972', '#FCFC72', '#A9FC72', '#72FC72', '#72FCA9', '#72FCFC', '#72A9FC', '#7272FC', '#A972FC', '#FC72FC', '#FC72A9', '#FC72A5', '#FCA972', '#FCFC72', '#A9FC72', '#72FC72', '#72FCA9', '#72FCFC', '#72A9FC', '#7272FC', '#A972FC', '#FC72FC', '#FC72A9'],
                             borderColor: '#FC72A5',
                             tension: 0.3
                         }]
@@ -310,7 +310,7 @@
                 const weeklyTransactionsChart = new Chart(weeklyTransactionsChartCanvas, {
                     type: 'bar',
                     data: {
-                        labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                        labels: ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'],
                         datasets: [{
                             label: 'Transazioni',
                             data: wtData,

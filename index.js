@@ -1,6 +1,12 @@
 // Initialize env
 require('dotenv').config();
 
+// Use node-fetch
+const fetch = require('node-fetch');
+
+// Use crypto
+const crypto = require('crypto');
+
 // Express
 const express = require('express');
 const app = express();
@@ -26,20 +32,30 @@ const _db = sqlite.open({
     // name: TEXT
     // email: TEXT
     // picture: TEXT
-    await db.run('CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT, email TEXT, picture TEXT)');
+    // token: TEXT
+    await db.run('CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT, email TEXT, picture TEXT, token TEXT)');
     await db.run('CREATE UNIQUE INDEX IF NOT EXISTS email ON users (email)');
 
     // Table expenses
-    // id: INTEGER
+    // id: TEXT
     // user_id: TEXT
     // date: TEXT
     // amount: REAL
     // description: TEXT
     // category: TEXT
-    await db.run('CREATE TABLE IF NOT EXISTS expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id TEXT, date TEXT, amount REAL, description TEXT, category TEXT, payee TEXT)');
+    // payee: TEXT
+    await db.run('CREATE TABLE IF NOT EXISTS expenses (id TEXT PRIMARY KEY, user_id TEXT, date TEXT, amount REAL, description TEXT, category TEXT, payee TEXT)');
     await db.run('CREATE INDEX IF NOT EXISTS user_id ON expenses (user_id)');
 
 
+    // Table reports
+    // id: TEXT
+    // user_id: TEXT
+    // year: INTEGER (UNIQUE with month)
+    // month: INTEGER (UNIQUE with year)
+    // content: TEXT
+    await db.run('CREATE TABLE IF NOT EXISTS reports (id TEXT PRIMARY KEY, user_id TEXT, year INTEGER, month INTEGER, content TEXT)');
+    await db.run('CREATE UNIQUE INDEX IF NOT EXISTS user_id_year_month ON reports (user_id, year, month)');
 })()
 
 // Initialize passport
@@ -71,7 +87,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'http://localhost/auth/google/callback'
+    callbackURL: `${process.env.REDIRECT_HOST}/auth/google/callback`
 }, async (accessToken, refreshToken, profile, done) => {
     // Check if user exists
     const db = await _db;
@@ -115,6 +131,68 @@ const auth = (req, res, next) => {
     }
 }
 
+const combinedAuth = async (req, res, next) => {
+    if (req.isAuthenticated()) {
+        next();
+    } else {
+        // default token locations such as headers and body
+        const token = req.headers['Authorization'] || req.body.token;
+
+        if (token) {
+            const db = await _db;
+
+            // hash token
+            const hashToken = crypto.createHash('sha256').update(token).digest('hex');
+
+            const user = await db.get('SELECT * FROM users WHERE token = ?', hashToken);
+
+            if (user) {
+                req.user = user;
+                next();
+            } else {
+                res.status(401).json({
+                    error: 'Invalid token'
+                });
+            }
+        } else {
+            res.status(401).json({
+                error: 'Token missing'
+            });
+        }
+    }
+}
+
+app.get('/auth/token', auth, async (req, res) => {
+    const db = await _db;
+    let token = 'T-' + crypto.randomUUID();
+    let hashToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    // check if token already exists
+    let user = await db.get('SELECT * FROM users WHERE token = ?', hashToken);
+    while (user) {
+        token = 'T-' + crypto.randomUUID();
+        hashToken = crypto.createHash('sha256').update(token).digest('hex');
+        user = await db.get('SELECT * FROM users WHERE token = ?', hashToken);
+    }
+
+    await db.run('UPDATE users SET token = ? WHERE id = ?', hashToken, req.user.id);
+    res.json({
+        token
+    });
+});
+
+app.delete('/auth/delete', auth, async (req, res) => {
+    const db = await _db;
+    await db.run('DELETE FROM users WHERE id = ?', req.user.id);
+    await db.run('DELETE FROM expenses WHERE user_id = ?', req.user.id);
+    req.logout((err) => {
+        if (err) return next(err);
+    });
+    res.json({
+        success: true
+    });
+});
+
 // protect home route then pass to next middleware
 app.get('/home/*', auth, (req, res, next) => {
     next();
@@ -147,7 +225,7 @@ app.get('/assets/default_user.png', (req, res) => {
 // Api
 
 // Protect api routes
-app.use('/api/*', auth, express.json());
+app.use('/api/*', combinedAuth, express.json());
 
 // Get /api/users/@me
 app.get('/api/users/@me', async (req, res) => {
@@ -251,7 +329,12 @@ app.get('/api/transactions/@me', async (req, res) => {
     res.json({ expenses, totalPages });
 });
 
-
+// same but for a specific transaction
+app.get('/api/transactions/@me/:id', async (req, res) => {
+    const db = await _db;
+    const expense = await db.get('SELECT * FROM expenses WHERE id = ? AND user_id = ?', req.params.id, req.user.id);
+    res.json(expense);
+});
 
 // get /api/image/:id
 app.get('/api/payee_picture/:id', async (req, res) => {
@@ -344,24 +427,18 @@ app.get('/api/payees/@me', async (req, res) => {
         "Airbnb",
         "Ryanair",
         "EasyJet",
-        "ItaliaOnline",
         "Mediaset",
         "Rai",
         "La Repubblica",
         "Corriere della Sera",
-        "Privalia",
         "Sephora",
         "Ikea",
         "Euronics",
-        "Expert",
-        "Unieuro",
-        "Volotea",
         "Blablacar",
         "LinkedIn",
         "Uber Eats",
-        "Subito.it",
+        "Subito",
         "Groupon",
-        "Groupama Assicurazioni",
         "Allianz",
         "Generali",
         "Satispay",
@@ -371,31 +448,10 @@ app.get('/api/payees/@me', async (req, res) => {
         "UniCredit",
         "Mediolanum",
         "Banco Posta",
-        "Sisal",
-        "Lottomatica",
         "SuperEnalotto",
-        "Snai",
         "Gazzetta dello Sport",
         "Il Sole 24 Ore",
         "Trenord",
-        "Illy",
-        "MSC Crociere",
-        "Costa Crociere",
-        "FlixBus",
-        "GoOpti",
-        "Trenitalia",
-        "PostePay",
-        "N26",
-        "WINDTRE",
-        "Fastweb",
-        "Telepass",
-        "Eni gas e luce",
-        "Iliad",
-        "Tre",
-        "Wind",
-        "Fastweb",
-        "Lottomatica",
-        "SuperEnalotto",
     ];
 
     const db = await _db;
@@ -424,8 +480,12 @@ app.post('/api/transactions/@me', async (req, res) => {
         return res.status(400).json({ error: 'Date is required and must be a valid date' });
 
     const user_id = req.user.id;
-    const sql = 'INSERT INTO expenses (user_id, payee, category, description, amount, date) VALUES (?, ?, ?, ?, ?, ?)';
-    const params = [user_id, payee, category, description, amount, date];
+
+    // generate transaction id that is an hash between user_id and a uuid
+    const transaction_id = 'tr' + crypto.createHash('sha256').update(`${user_id}${crypto.randomUUID()}`).digest('hex');
+
+    const sql = 'INSERT INTO expenses (id, user_id, payee, category, description, amount, date) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const params = [transaction_id, user_id, payee, category, description, amount, date];
     const result = await db.run(sql, params);
 
     if (result.changes == 1) {
@@ -526,5 +586,167 @@ app.get('/api/stats/@me', async (req, res) => {
         res.json(stats);
     } catch (error) {
         res.status(500).json({ error: 'Error retrieving stats data' });
+    }
+});
+
+// get all data for @me
+app.get('/api/data/@me', async (req, res) => {
+    // retrieve user information, excluding token, and all expenses
+    const db = await _db;
+    const user = await db.get('SELECT id, name, email, picture FROM users WHERE id = ?', req.user.id);
+    const expenses = await db.all('SELECT * FROM expenses WHERE user_id = ? ORDER BY date DESC', req.user.id);
+    // create date by combining column month and column year and then sort by date
+    const reports = await db.all('SELECT * FROM reports WHERE user_id = ? ORDER BY date(year || "-" || month || "-01") DESC', req.user.id);
+
+    // return user and expenses
+    res.json({ user, expenses, reports });
+});
+
+// get data for overview
+app.get('/api/overview/@me', async (req, res) => {
+    // retrieve count of transactions, total amount of expenses and income by month
+    const db = await _db;
+    const userId = req.user.id;
+
+    const transactionCountQuery = `
+    SELECT strftime('%Y-%m', date) AS month, COUNT(*) AS total_count
+    FROM expenses
+    WHERE user_id = ?
+    GROUP BY month
+    ORDER BY month DESC`;
+
+    const totalExpensesQuery = `
+    SELECT strftime('%Y-%m', date) AS month, SUM(amount) AS total_amount
+    FROM expenses
+    WHERE user_id = ? AND amount < 0
+    GROUP BY month
+    ORDER BY month DESC`;
+
+    const totalIncomeQuery = `
+    SELECT strftime('%Y-%m', date) AS month, SUM(amount) AS total_amount
+    FROM expenses
+    WHERE user_id = ? AND amount > 0
+    GROUP BY month
+    ORDER BY month DESC`;
+
+    try {
+        const transactionCount = await db.all(transactionCountQuery, userId);
+        const totalExpenses = await db.all(totalExpensesQuery, userId);
+        const totalIncome = await db.all(totalIncomeQuery, userId);
+
+        const overview = {
+            transactionCount,
+            totalExpenses,
+            totalIncome,
+        };
+
+        res.json(overview);
+    } catch (error) {
+        res.status(500).json({ error: 'Error retrieving overview data' });
+    }
+});
+
+// get data for single report
+app.get('/api/reports/@me/:yearmonth', async (req, res) => {
+    const db = await _db;
+    const userId = req.user.id;
+
+    const year = req.params.yearmonth.split('-')[0];
+    const month = req.params.yearmonth.split('-')[1];
+
+    const query = `
+    SELECT *
+    FROM reports
+    WHERE user_id = ? AND year = ? AND month = ?`;
+
+    try {
+        const report = await db.get(query, userId, year, month);
+        res.json(report || { content: '' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error retrieving report data' });
+    }
+});
+
+// same but post
+app.post('/api/reports/@me/:yearmonth', async (req, res) => {
+    const db = await _db;
+    const userId = req.user.id;
+
+    const year = req.params.yearmonth.split('-')[0];
+    const month = req.params.yearmonth.split('-')[1];
+
+    // check if a report already exists for this month
+    const existingReport = await db.get('SELECT id FROM reports WHERE user_id = ? AND year = ? AND month = ?', userId, year, month);
+
+    let prompt = `Imagine you're a financial advisor, help this user based on his expenses, give specific advice only for these expenses, the user cannot reply to you. Reply in italian. ${req.user.name}: Please give me a feedback on how to improve my finance, these are my expenses for this month ${month}/${year}: `;
+
+    // find all transactions for this month. remember that expenses has a date field
+    const transactions = await db.all('SELECT amount, description, category, payee FROM expenses WHERE user_id = ? AND strftime("%Y-%m", date) = ?', userId, `${year}-${month}`);
+
+    // add header to table
+    prompt += `\nAmount Description Category Payee`;
+
+    // append transactions to prompt in a table like format
+    transactions.forEach(transaction => {
+        prompt += `\n${transaction.amount} ${transaction.description} ${transaction.category} ${transaction.payee}`;
+    });
+
+    let aiResponse = {};
+
+    // fetch localhost:8824/api/prompt with post method passing prompt as json
+    try {
+        aiResponse = await fetch('http://localhost:8824/api/prompt', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: prompt }),
+        }).then(res => res.json());
+
+        while (aiResponse.response == 'Unable to fetch the response, Please try again.') {
+            aiResponse = await fetch('http://localhost:8824/api/prompt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: prompt }),
+            }).then(res => res.json());
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Error retrieving report data' });
+    }
+
+    // try to unescape unicode from response, without unescape as it is deprecated
+    try {
+        // split by newline then unescape unicode by json parsing and then join back
+        aiResponse.response = aiResponse.response.split('\n').map(line => JSON.parse(`"${line}"`)).join('\n');
+    } catch (error) {
+    }
+    aiResponse.response = aiResponse.response.replace(/(?<!\d|\.)\.(?!\.)/g, '.\n');
+    aiResponse.response = aiResponse.response.replace(/\s*\n\s*/g, '\n');
+
+    // create report
+    let query = `
+    INSERT INTO reports (id, user_id, year, month, content)
+    VALUES (?, ?, ?, ?, ?)`;
+
+    // if a report already exists, update it
+    if (existingReport) {
+        query = `
+        UPDATE reports
+        SET content = ?
+        WHERE id = ?`;
+    }
+
+    const id = 'r' + crypto.createHash('sha256').update(`${userId}${crypto.randomUUID()}`).digest('hex');
+
+    let params = [id, userId, year, month, aiResponse.response];
+
+    if (existingReport) {
+        params = [aiResponse.response, existingReport.id];
+    }
+
+    try {
+        await db.run(query, params);
+        res.json({ content: aiResponse.response });
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Error creating report' });
     }
 });
