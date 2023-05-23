@@ -394,6 +394,17 @@
                     fetch('/api/randomdata')
                         .then(response => response.json())
                         .then(data => {
+                            // if error
+                            if (data.error)
+                            {
+                                this.toast.title = "Errore";
+                                this.toast.message = "I dati casuali sono già stati generati. Eliminali tutti per poterli rigenerare."
+                                this.toast.classes = ['me-auto', 'text-danger'];
+                                const toast = new mdb.Toast(document.getElementById('liveToast'));
+                                toast.show();
+                                return;
+                            }
+
                             this.toast.title = "Dati generati";
                             this.toast.message = "I dati sono stati generati con successo.";
                             this.toast.classes = ['me-auto', 'text-success'];
