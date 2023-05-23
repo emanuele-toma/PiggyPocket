@@ -12,6 +12,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .card-body:hover div div div i {
+            transform: scale(1.1);
+            transition: transform 0.2s;
+        }
+
+        .card-body div div div i {
+            transform: scale(1);
+            transition: transform 0.2s;
+        }
+    </style>
     <title>PiggyPocket - Home</title>
 </head>
 
@@ -85,10 +96,12 @@
         <!-- Horizontally aligned div -->
         <div class="container overflow-hidden p-5">
             <div v-for="transaction in transactionCount" class="card shadow-4-strong mb-3">
-                <div @click="openReport(transaction.month)" class="card-body lh-sm">
+                <div @click="openReport(transaction.month)" class="card-body lh-sm" style="cursor: pointer">
                     <div class="d-flex justify-content-between">
                         <div>
                             <div class="d-flex align-items-center">
+                                <!-- 45 px height touch icon use fontawesome -->
+                                <i class="fas fa-magnifying-glass-plus fa-2x"></i>
                                 <div class="ms-3">
                                     <p class="fw-bold mb-1">{{monthNumberToName(transaction.month.split('-')[1])}} {{transaction.month.split('-')[0]}}</p>
                                     <p class="text-muted mb-0">{{transaction.total_count}} transazion{{transaction.total_count == 1 ? 'e' : 'i'}}</p>
