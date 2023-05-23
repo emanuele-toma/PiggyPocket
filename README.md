@@ -74,7 +74,3 @@ Per installare PiggyPocket sul tuo ambiente locale, segui questi passaggi:
 ## Licenza
 
 PiggyPocket è distribuito con la licenza AGPLv3. Per ulteriori informazioni, consulta il file [LICENSE](LICENSE).
-
----
-
-*Nota: PiggyPocket è un progetto immaginario creato a scopo dimostrativo.*
