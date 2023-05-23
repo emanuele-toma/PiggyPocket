@@ -83,29 +83,29 @@
         <!-- Navbar -->
 
         <!-- Horizontally aligned div -->
-        <div class="container overflow-hidden p-5">
+        <div class="container overflow-hidden py-5 px-4">
             <div class="mb-5 text-center">
                 <h1>Benvenuto {{ user.name }} su PiggyPocket</h1>
                 <h5>Vai nella pagina Transazioni per aggiungere dati</h5>
             </div>
             <div id="chartContainer" class="row g-4 row-cols-md-2 row-cols-1">
                 <div class="col">
-                    <div class="border rounded p-4" style="height:40vh">
+                    <div class="border rounded p-4" style="height:60vh">
                         <canvas id="categoryChart"></canvas>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="border rounded p-4" style="height:40vh">
+                    <div class="border rounded p-4" style="height:60vh">
                         <canvas id="monthlyExpensesChart"></canvas>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="border rounded p-4" style="height:40vh">
+                    <div class="border rounded p-4" style="height:60vh">
                         <canvas id="monthlyIncomeChart"></canvas>
                     </div>
                 </div>
                 <div class="col">
-                    <div class="border rounded p-4" style="height:40vh">
+                    <div class="border rounded p-4" style="height:60vh">
                         <canvas id="weeklyTransactionsChart"></canvas>
                     </div>
                 </div>
@@ -297,7 +297,7 @@
 
                 // Create Weekly Transactions Chart
                 chartOptionsWeeklyTransactions = JSON.parse(JSON.stringify(chartOptions));
-                chartOptionsWeeklyTransactions.plugins.legend.title.text = 'Numero di transazioni per giorno della settimana';
+                chartOptionsWeeklyTransactions.plugins.legend.title.text = 'Transazioni per giorno';
 
                 console.log(weeklyTransactions);
                 const wtData = [0, 0, 0, 0, 0, 0, 0];
