@@ -30,6 +30,8 @@ Nella pagina riepilogo mensile si può vedere un riepilogo mese per mese delle t
 
 Nella pagina impostazioni si possono vedere i dati dell'utente, si possono esportare i dati in formato JSON, si possono aggiungere delle transazioni preimpostate e si può eliminare l'account.
 
+Inoltre nella pagina impostazioni si può generare un token per utilizzare l'api, il token può essere visualizzato solo una volta ma può essere rigenerato.
+
 ## Documentazione API
 
 La documentazione completa delle API di PiggyPocket è disponibile nel file [API.md](API.md). Questo file fornisce dettagli su tutti gli endpoint API disponibili, i parametri richiesti, le risposte attese e altre informazioni importanti per l'integrazione con l'applicazione.
