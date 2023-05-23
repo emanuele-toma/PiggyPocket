@@ -235,6 +235,9 @@
                         <button @click="fetchData" type="button" class="btn btn-outline-primary">
                             <i class="fas fa-file-export me-2"></i>Esporta dati
                         </button>
+                        <button @click="randomData" type="button" class="btn btn-outline-warning">
+                            <i class="fas fa-shuffle me-2"></i>Genera transazioni casuali
+                        </button>
                         <button @click="openDelete" type="button" class="btn btn-outline-danger">
                             <i class="fas fa-trash me-2"></i>Elimina account
                         </button>
@@ -244,6 +247,9 @@
                         <!-- Export data and delete account -->
                         <button @click="fetchData" type="button" class="btn btn-outline-primary w-100 mb-3">
                             <i class="fas fa-file-export me-2"></i>Esporta dati
+                        </button>
+                        <button @click="randomData" type="button" class="btn btn-outline-warning w-100 mb-3">
+                            <i class="fas fa-shuffle me-2"></i>Genera transazioni casuali
                         </button>
                         <button @click="openDelete" type="button" class="btn btn-outline-danger w-100">
                             <i class="fas fa-trash me-2"></i>Elimina account
@@ -381,6 +387,19 @@
                 {
                     const modal = new mdb.Modal(document.getElementById('deleteModal'));
                     modal.show();
+                },
+                randomData()
+                {
+                    // fetch api/randomdata
+                    fetch('/api/randomdata')
+                        .then(response => response.json())
+                        .then(data => {
+                            this.toast.title = "Dati generati";
+                            this.toast.message = "I dati sono stati generati con successo.";
+                            this.toast.classes = ['me-auto', 'text-success'];
+                            const toast = new mdb.Toast(document.getElementById('liveToast'));
+                            toast.show();
+                        });
                 }
             },
             async mounted() {
