@@ -94,13 +94,13 @@ if __name__ == '__main__':
 5. Inviare richieste contenenti un oggetto JSON con la chiave "prompt" e il testo del prompt come valore. Ad esempio:
    ```json
    {
-     "prompt": "Mi chiamo Alice e mi piace..."
+     "prompt": "Ho speso X euro per..."
    }
    ```
 6. Il server invierà una risposta JSON contenente la risposta generata dal modello GPT-3.5:
    ```json
    {
-     "response": "Ciao Alice, mi chiamo Bob e sono felice di..."
+     "response": "Per migliorare le tue finanze, dovresti..."
    }
    ```
 7. È possibile personalizzare ulteriormente il comportamento del modello regolando i parametri nella chiamata API al modello GPT-3.5.
