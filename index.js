@@ -762,7 +762,7 @@ app.get('/api/randomdata', async (req, res) => {
     const user_id = req.user.id;
 
     // check that there is no expense for this user that starts with trrandom
-    const existingRandomData = await db.get('SELECT id FROM expenses WHERE user_id = ? AND description LIKE "trrandom%"', user_id);
+    const existingRandomData = await db.get('SELECT id FROM expenses WHERE user_id = ? AND id LIKE "trrandom%"', user_id);
 
     if (existingRandomData) {
         return res.status(500).json({ error: 'Random data already exists' });
