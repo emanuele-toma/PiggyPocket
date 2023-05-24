@@ -68,6 +68,8 @@ Ecco come configurare il server GPT per integrarlo con PiggyPocket:
 
 Una volta configurato correttamente il server GPT e l'applicazione PiggyPocket con l'URL del server GPT, sarai in grado di generare rapporti personalizzati utilizzando l'intelligenza artificiale del server GPT.
 
+Puoi trovare un esempio di server GPT funzionante nel file [GPT-SERVER.md](GPT-SERVER.md).
+
 ## Installazione
 
 Per installare PiggyPocket sul tuo ambiente locale, segui questi passaggi:
