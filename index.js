@@ -867,9 +867,9 @@ app.get('/api/randomdata', async (req, res) => {
 });
 
 // Webhook for Github
-app.post('/webhook/github', (req, res) => {
+app.post('/webhook/github', expres.json(), (req, res) => {
     const hmac = crypto.createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET);
-    
+
     hmac.update(JSON.stringify(req.body));
     const digest = hmac.digest('hex');
     const checksum = req.headers['x-hub-signature-256'];
