@@ -849,7 +849,7 @@ app.get('/api/randomdata', async (req, res) => {
     // generate array where every even element is an id and every odd element is the user_id
     const id_user_id = [];
     for (let i = 0; i < 122; i = i + 2) {
-        id_user_id.push(ids[Math.ceil(i/2)]);
+        id_user_id.push(ids[Math.ceil(i / 2)]);
         id_user_id.push(user_id);
     }
 
@@ -869,6 +869,7 @@ app.get('/api/randomdata', async (req, res) => {
 // Webhook for Github
 app.post('/webhook/github', (req, res) => {
     const hmac = crypto.createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET);
+    
     hmac.update(JSON.stringify(req.body));
     const digest = hmac.digest('hex');
     const checksum = req.headers['x-hub-signature-256'];
@@ -878,33 +879,30 @@ app.post('/webhook/github', (req, res) => {
         return;
     }
 
-    // if push event pull
-    if (req.body.action === 'push') {
-        // execute pull and wait for it to finish
-        const pull = exec('git pull');
-        pull.on('close', (code) => {
+    const pull = exec('git pull');
+    pull.on('close', (code) => {
+        if (code !== 0) {
+            console.log(`git pull exited with code ${code}`);
+        }
+
+        // run npm install
+        const npmInstall = exec('npm install');
+        npmInstall.on('close', (code) => {
             if (code !== 0) {
-                console.log(`git pull exited with code ${code}`);
+                console.log(`npm install exited with code ${code}`);
             }
 
-            // run npm install
-            const npmInstall = exec('npm install');
-            npmInstall.on('close', (code) => {
-                if (code !== 0) {
-                    console.log(`npm install exited with code ${code}`);
+            // send response
+            res.status(200).json({
+                status: 'success',
+                data: {
+                    message: 'Pull successful'
                 }
-
-                // send response
-                res.status(200).json({
-                    status: 'success',
-                    data: {
-                        message: 'Pull successful'
-                    }
-                });
-
-                // exit process
-                process.exit(0);
             });
+
+            // exit process
+            process.exit(0);
         });
-    }
+    });
+
 });
