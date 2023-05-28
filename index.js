@@ -1,6 +1,9 @@
 // Initialize env
 require('dotenv').config();
 
+// Use exec
+const exec = require('child_process').exec;
+
 // Use node-fetch
 const fetch = require('node-fetch');
 
@@ -878,7 +881,7 @@ app.post('/webhook/github', express.json(), (req, res) => {
         res.status(403).send('Unauthorized');
         return;
     }
-
+    
     const pull = exec('git pull');
     pull.on('close', (code) => {
         if (code !== 0) {
