@@ -12,6 +12,10 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
+// use compression
+const compression = require('compression');
+app.use(compression());
+
 app.listen(port, () => console.log(`In ascolto su porta: ${port}`));
 
 // Database
@@ -860,4 +864,47 @@ app.get('/api/randomdata', async (req, res) => {
             message: 'Transactions created successfully'
         }
     });
+});
+
+// Webhook for Github
+app.post('/webhook/github', (req, res) => {
+    const hmac = crypto.createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET);
+    hmac.update(JSON.stringify(req.body));
+    const digest = hmac.digest('hex');
+    const checksum = req.headers['x-hub-signature-256'];
+
+    if (!checksum || !digest || checksum !== `sha256=${digest}`) {
+        res.status(403).send('Unauthorized');
+        return;
+    }
+
+    // if push event pull
+    if (req.body.action === 'push') {
+        // execute pull and wait for it to finish
+        const pull = exec('git pull');
+        pull.on('close', (code) => {
+            if (code !== 0) {
+                console.log(`git pull exited with code ${code}`);
+            }
+
+            // run npm install
+            const npmInstall = exec('npm install');
+            npmInstall.on('close', (code) => {
+                if (code !== 0) {
+                    console.log(`npm install exited with code ${code}`);
+                }
+
+                // send response
+                res.status(200).json({
+                    status: 'success',
+                    data: {
+                        message: 'Pull successful'
+                    }
+                });
+
+                // exit process
+                process.exit(0);
+            });
+        });
+    }
 });
