@@ -9,9 +9,10 @@ router.get('/payee_picture/:id', async (req, res) => {
     // check if file exists in folder /assets/payees/:id, ignore extension, if exists send it, else send default image
     const fs = require('fs');
     const path = require('path');
-    
+
     let payee = req.params.id;
-    const dir = path.join(__dirname, 'public/assets/payees');
+    // join root directory with /public/assets/payees
+    const dir = path.join(__dirname, '../public/assets/payees');
     const files = fs.readdirSync(dir);
     if (files.length > 0) {
         // replace spaces with underscores
@@ -20,12 +21,12 @@ router.get('/payee_picture/:id', async (req, res) => {
         const file = files.find(f => f.split('.')[0].toLowerCase() == payee)?.split('.')[0];
 
         if (file) {
-            res.sendFile(path.join(__dirname, `public/assets/payees/${file}.png`));
+            res.sendFile(path.join(__dirname, `../public/assets/payees/${file}.png`));
         } else {
-            res.sendFile(path.join(__dirname, 'public/assets/payees/default.png'));
+            res.sendFile(path.join(__dirname, '../public/assets/payees/default.png'));
         }
     } else {
-        res.sendFile(path.join(__dirname, 'public/assets/payees/default.png'));
+        res.sendFile(path.join(__dirname, '../public/assets/payees/default.png'));
     }
 });
 
