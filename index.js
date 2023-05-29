@@ -27,10 +27,7 @@ app.listen(port, () => console.log(`In ascolto su porta: ${port}`));
 // Database
 const sqlite3 = require('sqlite3').verbose();
 const sqlite = require('sqlite');
-const _db = new Database(sqlite.open({
-    filename: './database/database.sqlite',
-    driver: sqlite3.Database
-}));
+const _db = new Database();
 
 (async () => {
 
