@@ -25,8 +25,6 @@ const Database = require('./classes/database');
 app.listen(port, () => console.log(`In ascolto su porta: ${port}`));
 
 // Database
-const sqlite3 = require('sqlite3').verbose();
-const sqlite = require('sqlite');
 const _db = new Database();
 
 (async () => {
@@ -143,7 +141,7 @@ const combinedAuth = async (req, res, next) => {
         next();
     } else {
         // default token locations such as headers and body
-        const token = req.headers['Authorization'] || req.body.token;
+        const token = req.headers['authorization'] || req?.body?.token;
 
         if (token) {
             const db = await _db;
@@ -233,7 +231,7 @@ app.get('/assets/default_user.png', (req, res) => {
 // Api
 
 // Protect api routes
-app.use('/api/*', combinedAuth, express.json());
+app.use('/api/*', express.json(), combinedAuth);
 
 // Load routers from folder ./api where each file is a router
 fs.readdirSync('./api').forEach(file => {
