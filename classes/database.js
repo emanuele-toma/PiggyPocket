@@ -5,6 +5,8 @@ class Database {
         if (!this.instance) {
             this.instance = db;
         }
+
+        console.log(this.instance);
         return this.instance;
     }
 }
