@@ -1,14 +1,15 @@
 class Database {
     static instance = null;
+    db = null;
 
     constructor(db) {
         if (!this.instance) {
-            this.instance = db;
+            this.instance = this;
+            this.db = db;
         }
 
-        console.log(this.instance);
-        return this.instance;
+        return this.instance.db;
     }
 }
 
-module.exports = new Database();
+module.exports = Database;
