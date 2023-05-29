@@ -1,3 +1,6 @@
+const Database = require('../classes/database');
+const _db = new Database();
+
 const express = require('express');
 const router = express.Router();
 

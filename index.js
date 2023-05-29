@@ -7,9 +7,6 @@ const exec = require('child_process').exec;
 // Use fs
 const fs = require('fs');
 
-// Use node-fetch
-const fetch = require('node-fetch');
-
 // Use crypto
 const crypto = require('crypto');
 
@@ -22,15 +19,18 @@ const port = process.env.PORT || 3000;
 const compression = require('compression');
 app.use(compression());
 
+// Use database
+const Database = require('./classes/database');
+
 app.listen(port, () => console.log(`In ascolto su porta: ${port}`));
 
 // Database
 const sqlite3 = require('sqlite3').verbose();
 const sqlite = require('sqlite');
-const _db = sqlite.open({
+const _db = new Database(sqlite.open({
     filename: './database/database.sqlite',
     driver: sqlite3.Database
-});
+}));
 
 (async () => {
 

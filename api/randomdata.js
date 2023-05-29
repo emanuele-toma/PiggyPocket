@@ -1,5 +1,10 @@
+const Database = require('../classes/database');
+const _db = new Database();
+
 const express = require('express');
 const router = express.Router();
+
+const crypto = require('crypto');
 
 // randomdata endpoint
 router.get('/randomdata', async (req, res) => {

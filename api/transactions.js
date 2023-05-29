@@ -1,5 +1,10 @@
+const Database = require('../classes/database');
+const _db = new Database();
+
 const express = require('express');
 const router = express.Router();
+
+const crypto = require('crypto');
 
 router.get('/transactions/@me', async (req, res) => {
     const db = await _db;

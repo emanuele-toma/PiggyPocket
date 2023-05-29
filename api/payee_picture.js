@@ -1,3 +1,6 @@
+const Database = require('../classes/database');
+const _db = new Database();
+
 const express = require('express');
 const router = express.Router();
 
@@ -6,6 +9,7 @@ router.get('/payee_picture/:id', async (req, res) => {
     // check if file exists in folder /assets/payees/:id, ignore extension, if exists send it, else send default image
     const fs = require('fs');
     const path = require('path');
+    
     let payee = req.params.id;
     const dir = path.join(__dirname, 'public/assets/payees');
     const files = fs.readdirSync(dir);

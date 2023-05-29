@@ -1,5 +1,11 @@
+const Database = require('../classes/database');
+const _db = new Database();
+
 const express = require('express');
 const router = express.Router();
+
+const fetch = require('node-fetch');
+const crypto = require('crypto');
 
 // get data for single report
 router.get('/reports/@me/:yearmonth', async (req, res) => {
