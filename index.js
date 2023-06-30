@@ -66,6 +66,7 @@ const _db = new Database();
 // Initialize passport
 const passport = require('passport');
 const session = require('express-session');
+const exp = require('constants');
 
 app.use(passport.initialize());
 
@@ -151,9 +152,18 @@ const combinedAuth = async (req, res, next) => {
 
             const user = await db.get('SELECT * FROM users WHERE token = ?', hashToken);
 
-            if (user) {
-                req.user = user;
-                next();
+            if (user) {                
+                req.login(user, (err) => {
+                    if (err) {
+                        res.status(401).json({
+                            error: 'Invalid token'
+                        });
+                    }
+                });
+
+                req.session.save(() => {
+                    next();
+                });
             } else {
                 res.status(401).json({
                     error: 'Invalid token'
@@ -185,6 +195,14 @@ app.get('/auth/token', auth, async (req, res) => {
         token
     });
 });
+
+app.post('/auth/token', express.json(), combinedAuth, async (req, res, next) => {
+    return res.status(200).json({
+        success: true
+    });
+});
+    
+
 
 app.delete('/auth/delete', auth, async (req, res) => {
     const db = await _db;
