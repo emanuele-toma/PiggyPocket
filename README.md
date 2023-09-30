@@ -73,7 +73,9 @@ You can find an example of a working GPT server in the [GPT-SERVER.md](GPT-SERVE
 
 To install PiggyPocket in your local environment, follow these steps:
 
-1. Clone the PiggyPocket repository from GitHub: `git clone https://github.com/yourname/piggypocket.git`
+### Manual Installation
+
+1. Clone the PiggyPocket repository from GitHub: `git clone git@github.com:emanuele-toma/PiggyPocket.git`
 2. Navigate to the project folder: `cd piggypocket`
 3. Install dependencies: `npm install`
 4. Configure environment variables:
@@ -86,12 +88,28 @@ To install PiggyPocket in your local environment, follow these steps:
      SESSION_SECRET=abc123
      REDIRECT_HOST=http://example.com
      ```
-5. Start the application: `node .`
+5. Start the application: `npm start`
 6. The application will be available at `http://localhost:80`
+
+### Docker Installation
+
+1. Clone the PiggyPocket repository from GitHub: `git clone git@github.com:emanuele-toma/PiggyPocket.git`
+2. Navigate to the project folder: `cd piggypocket`
+3. Configure environment variables:
+   - Create a `.env` file in the main project folder
+   - Add the following environment variables to the `.env` file and provide appropriate values:
+     ```
+     PORT=80
+     GOOGLE_CLIENT_ID=abcd1234.apps.googleusercontent.com
+     GOOGLE_CLIENT_SECRET=ABCD-EFGH-HIJK
+     SESSION_SECRET=abc123
+     REDIRECT_HOST=http://example.com
+     ```
+4. Run docker compose: `docker-compose up -d`
 
 ## Demo
 
-https://piggypocket.yourdomain.com
+https://piggypocket.tomaemanuele.it
 
 ## License
 

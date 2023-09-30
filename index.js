@@ -259,6 +259,12 @@ fs.readdirSync('./api').forEach(file => {
 
 // Webhook for Github
 app.post('/webhook/github', express.json(), (req, res) => {
+    // if no env variable is set, return 501
+    if (!process.env.GITHUB_WEBHOOK_SECRET) {
+        res.status(501).send('Not implemented');
+        return;
+    }
+
     const hmac = crypto.createHmac('sha256', process.env.GITHUB_WEBHOOK_SECRET);
 
     hmac.update(JSON.stringify(req.body));
