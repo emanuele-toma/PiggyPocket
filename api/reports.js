@@ -39,9 +39,7 @@ router.post('/reports/@me/:yearmonth', async (req, res) => {
     // check if a report already exists for this month
     const existingReport = await db.get('SELECT id FROM reports WHERE user_id = ? AND year = ? AND month = ?', userId, year, month);
 
-    console.log(req.user.name);
-
-    let prompt = `Imagine you're a financial advisor, your name is PiggyPocket, help this user based on his expenses, give specific advice only for these expenses, the user cannot reply to you. Reply in english. Do not use markdown in your reply. Every amount is in euros. ${req.user.name}: Please give me a feedback on how to improve my finance, these are my expenses for this month ${month}/${year}: `;
+    let prompt = `Imagine you're a financial advisor, your name is PiggyPocket, help this user based on his expenses, give specific advice only for these expenses, the user cannot reply to you. Reply in english. Do not use markdown in your reply. Every amount is in euros. ${req.user.name.givenName}: Please give me a feedback on how to improve my finance, these are my expenses for this month ${month}/${year}: `;
 
     // find all transactions for this month. remember that expenses has a date field
     const transactions = await db.all('SELECT amount, description, category, payee FROM expenses WHERE user_id = ? AND strftime("%Y-%m", date) = ?', userId, `${year}-${month}`);
