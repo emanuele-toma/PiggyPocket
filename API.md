@@ -1,74 +1,74 @@
-## Documentazione dell'API di PiggyPocket - Autenticazione
+## PiggyPocket API Documentation - Authentication
 
-Per accedere alle risorse protette dell'API di PiggyPocket, gli utenti devono autenticarsi. Questa guida spiega come l'utente può autenticarsi utilizzando il processo di autenticazione combinato.
+To access the protected resources of the PiggyPocket API, users must authenticate. This guide explains how users can authenticate using the combined authentication process.
 
-Il processo di autenticazione combinato accetta un token di autenticazione fornito dall'utente attraverso l'header della richiesta (`Authorization`) o il corpo della richiesta (`token`).
+The combined authentication process accepts an authentication token provided by the user through the request header (`Authorization`) or the request body (`token`).
 
-Il token di autenticazione si può ottenere tramite la pagina impostazioni dell'utente.
+The authentication token can be obtained through the user's settings page.
 
-Ecco come effettuare l'autenticazione:
+Here's how to authenticate:
 
-1. Includi il token di autenticazione nella richiesta utilizzando uno dei seguenti metodi:
-   - **Header**: Aggiungi l'header `Authorization` alla tua richiesta con il valore del token. L'header dovrebbe seguire lo schema `Authorization: <token>`. Ad esempio:
-
-     ```
-     Authorization: <token_di_autenticazione>
-     ```
-
-   - **Corpo della richiesta**: Includi il token di autenticazione nel corpo della richiesta come parametro con il nome `token`. Ad esempio:
+1. Include the authentication token in the request using one of the following methods:
+   - **Header**: Add the `Authorization` header to your request with the token value. The header should follow the schema `Authorization: <token>`. For example:
 
      ```
-     POST /api/richiesta HTTP/1.1
+     Authorization: <authentication_token>
+     ```
+
+   - **Request Body**: Include the authentication token in the request body as a parameter with the name `token`. For example:
+
+     ```
+     POST /api/request HTTP/1.1
      Content-Type: application/json
 
      {
-       "token": "<token_di_autenticazione>"
+       "token": "<authentication_token>"
      }
      ```
 
-2. Il server verificherà il token di autenticazione fornito. Ecco come avviene la verifica:
-   - Il token viene estratto dall'header `Authorization` o dal corpo della richiesta.
-   - Il token viene hashato utilizzando l'algoritmo SHA-256.
-   - Viene effettuata una ricerca nel database per trovare un utente corrispondente al token hashato.
-   - Se l'utente viene trovato nel database, l'autenticazione viene considerata valida e l'utente viene autorizzato ad accedere alle risorse protette.
-   - Se l'utente non viene trovato nel database, l'autenticazione viene considerata non valida e viene restituito un errore di autenticazione.
+2. The server will verify the provided authentication token. Here's how the verification occurs:
+   - The token is extracted from the `Authorization` header or the request body.
+   - The token is hashed using the SHA-256 algorithm.
+   - A database search is performed to find a user corresponding to the hashed token.
+   - If the user is found in the database, the authentication is considered valid, and the user is authorized to access the protected resources.
+   - If the user is not found in the database, the authentication is considered invalid, and an authentication error is returned.
 
-Se il processo di autenticazione ha successo, l'utente sarà autorizzato ad accedere alle risorse protette dell'API di PiggyPocket. In caso di errori di autenticazione, verrà restituito un messaggio di errore appropriato con lo stato HTTP 401 (Non autorizzato).
+If the authentication process is successful, the user will be authorized to access the protected resources of the PiggyPocket API. In case of authentication errors, an appropriate error message will be returned with HTTP status 401 (Unauthorized).
 
-Assicurati di includere il token di autenticazione corretto nella tua richiesta per accedere alle risorse protette dell'API di PiggyPocket.
+Make sure to include the correct authentication token in your request to access the protected resources of the PiggyPocket API.
 
-*Ricorda di proteggere il tuo token di autenticazione e di trattarlo come informazione sensibile. Non condividere il token con altri e assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione del token durante le richieste API.*
+*Remember to protect your authentication token and treat it as sensitive information. Do not share the token with others, and ensure to use secure connections (HTTPS) to protect the transmission of the token during API requests.*
 
-## Documentazione dell'API di PiggyPocket - Endpoint Utenti
+## PiggyPocket API Documentation - Users Endpoint
 
-Questo documento fornisce una descrizione dell'endpoint API per ottenere le informazioni dell'utente corrente (`/api/users/@me`) nell'applicazione PiggyPocket.
+This document provides a description of the API endpoint for retrieving current user information (`/api/users/@me`) in the PiggyPocket application.
 
-### Struttura del Database
+### Database Structure
 
-Il database contiene la tabella `users` con i seguenti campi:
+The database contains the `users` table with the following fields:
 
-- `id`: Identificatore dell'utente (di tipo `TEXT`).
-- `name`: Nome dell'utente (di tipo `TEXT`).
-- `email`: Indirizzo email dell'utente (di tipo `TEXT`).
-- `picture`: URL dell'immagine del profilo dell'utente (di tipo `TEXT`).
-- `token`: Token di autenticazione dell'utente (di tipo `TEXT`).
+- `id`: User identifier (of type `TEXT`).
+- `name`: User's name (of type `TEXT`).
+- `email`: User's email address (of type `TEXT`).
+- `picture`: URL of the user's profile picture (of type `TEXT`).
+- `token`: User's authentication token (of type `TEXT`).
 
-### Endpoint API
+### API Endpoint
 
-Il seguente endpoint API è disponibile per ottenere le informazioni dell'utente corrente:
+The following API endpoint is available for retrieving current user information:
 
 - **GET /api/users/@me**
 
-  Questo endpoint restituisce le informazioni dell'utente corrente. L'utente deve essere autenticato per accedere a questo endpoint. Le informazioni restituite includono l'identificatore dell'utente (`id`), il nome (`name`), l'indirizzo email (`email`) e l'URL dell'immagine del profilo (`picture`).
+  This endpoint returns the information of the current user. The user must be authenticated to access this endpoint. The returned information includes the user's identifier (`id`), name (`name`), email address (`email`), and profile picture URL (`picture`).
 
-  Esempio di richiesta:
+  Example request:
   ```
   GET /api/users/@me HTTP/1.1
   Host: example.com
-  Authorization: <token_di_autenticazione>
+  Authorization: <authentication_token>
   ```
 
-  Esempio di risposta:
+  Example response:
   ```json
   {
     "id": "123456",
@@ -78,53 +78,53 @@ Il seguente endpoint API è disponibile per ottenere le informazioni dell'utente
   }
   ```
 
-  **Note**:
-  - Assicurati di includere l'header `Authorization` nella richiesta con il token di autenticazione valido per accedere alle informazioni dell'utente corrente.
-  - In caso di mancata autenticazione o token di autenticazione non valido, verrà restituito uno stato HTTP 401 (Non autorizzato) con un messaggio di errore corrispondente.
+  **Notes**:
+  - Ensure to include the `Authorization` header in the request with the valid authentication token to access the information of the current user.
+  - In case of missing authentication or an invalid authentication token, an HTTP status 401 (Unauthorized) will be returned with an appropriate error message.
 
 
 
-*Ricorda di proteggere le informazioni dell'utente e di trattarle come dati sensibili. Assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione dei dati durante le richieste API.*
+*Remember to protect user information and treat it as sensitive data. Ensure to use secure connections (HTTPS) to protect data transmission during API requests.*
 
-## Documentazione dell'API di PiggyPocket - Endpoint Transazioni
+## PiggyPocket API Documentation - Transactions Endpoint
 
-Questo documento fornisce una descrizione dell'endpoint API per ottenere le transazioni dell'utente corrente (`/api/transactions/@me`) nell'applicazione PiggyPocket.
+This document provides a description of the API endpoint for retrieving current user transactions (`/api/transactions/@me`) in the PiggyPocket application.
 
-### Struttura del Database
+### Database Structure
 
-Il database contiene la tabella `expenses` con i seguenti campi:
+The database contains the `expenses` table with the following fields:
 
-- `id`: Identificatore della transazione (di tipo `TEXT`).
-- `user_id`: Identificatore dell'utente proprietario della transazione (di tipo `TEXT`).
-- `date`: Data della transazione (di tipo `TEXT`).
-- `amount`: Importo della transazione (di tipo `REAL`).
-- `description`: Descrizione della transazione (di tipo `TEXT`).
-- `category`: Categoria della transazione (di tipo `TEXT`).
-- `payee`: Beneficiario della transazione (di tipo `TEXT`).
+- `id`: Transaction identifier (of type `TEXT`).
+- `user_id`: Identifier of the user who owns the transaction (of type `TEXT`).
+- `date`: Transaction date (of type `TEXT`).
+- `amount`: Transaction amount (of type `REAL`).
+- `description`: Transaction description (of type `TEXT`).
+- `category`: Transaction category (of type `TEXT`).
+- `payee`: Payee of the transaction (of type `TEXT`).
 
-### Endpoint API
+### API Endpoint
 
-Il seguente endpoint API è disponibile per ottenere le transazioni dell'utente corrente:
+The following API endpoint is available for retrieving transactions of the current user:
 
 - **GET /api/transactions/@me**
 
-  Questo endpoint restituisce le transazioni dell'utente corrente con opzioni di filtro e paginazione. L'utente deve essere autenticato per accedere a questo endpoint.
+  This endpoint returns transactions of the current user with filtering and pagination options. The user must be authenticated to access this endpoint.
 
-  Parametri della query disponibili:
-  - `page` (opzionale): Numero di pagina per la paginazione delle transazioni.
-  - `category` (opzionale): Categoria delle transazioni da filtrare.
-  - `type` (opzionale): Tipo di transazioni da filtrare (`income` per le entrate, qualsiasi altro valore per le uscite).
-  - `date_span` (opzionale): Intervallo di date delle transazioni da filtrare (`week` per la settimana corrente, `month` per il mese corrente, `year` per l'anno corrente).
-  - `search` (opzionale): Termine di ricerca per filtrare le transazioni in base alla descrizione o al beneficiario.
+  Available query parameters:
+  - `page` (optional): Page number for transaction pagination.
+  - `category` (optional): Category of transactions to filter.
+  - `type` (optional): Type of transactions to filter (`income` for income, any other value for expenses).
+  - `date_span` (optional): Date span of transactions to filter (`week` for the current week, `month` for the current month, `year` for the current year).
+  - `search` (optional): Search term to filter transactions based on description or payee.
 
-  Esempio di richiesta:
+  Example request:
   ```
   GET /api/transactions/@me?page=1&category=groceries&type=expense&date_span=month&search=food HTTP/1.1
   Host: example.com
-  Authorization: <token_di_autenticazione>
+  Authorization: <authentication_token>
   ```
 
-  Esempio di risposta:
+  Example response:
   ```json
   {
     "expenses": [
@@ -133,7 +133,7 @@ Il seguente endpoint API è disponibile per ottenere le transazioni dell'utente 
         "user_id": "7890",
         "date": "2023-05-20",
         "amount": 25.0,
-        "description": "Spesa al supermercato",
+        "description": "Grocery shopping",
         "category": "groceries",
         "payee": "Supermarket XYZ"
       },
@@ -142,7 +142,7 @@ Il seguente endpoint API è disponibile per ottenere le transazioni dell'utente 
         "user_id": "7890",
         "date": "2023-05-18",
         "amount": 15.0,
-        "description": "Pranzo al ristorante",
+        "description": "Lunch at restaurant",
         "category": "dining",
         "payee": "Restaurant ABC"
       }
@@ -151,122 +151,120 @@ Il seguente endpoint API è disponibile per ottenere le transazioni dell'utente 
   }
   ```
 
-  **Note**:
-  - Assicurati di includere l'header `Authorization` nella richiesta con il token di autenticazione valido per accedere alle transazioni dell'utente corrente.
-  - Puoi utilizzare i parametri della query per filtrare le transazioni in base alle tue esigenze.
-  - Le transazioni
-
- sono restituite in base alla paginazione, con un numero predefinito di transazioni per pagina (10 nel nostro caso).
-  - La risposta include l'array `expenses` contenente le transazioni e il campo `totalPages` che indica il numero totale di pagine disponibili in base alle transazioni filtrate.
+  **Notes**:
+  - Ensure to include the `Authorization` header in the request with the valid authentication token to access transactions of the current user.
+  - You can use query parameters to filter transactions based on your requirements.
+  - Transactions are returned based on pagination, with a default number of transactions per page (10 in our case).
+  - The response includes the `expenses` array containing transactions and the `totalPages` field indicating the total number of available pages based on filtered transactions.
 
 
-*Ricorda di proteggere le informazioni dell'utente e di trattarle come dati sensibili. Assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione dei dati durante le richieste API.*
+*Remember to protect user information and treat it as sensitive data. Ensure to use secure connections (HTTPS) to protect data transmission during API requests.*
 
-## Documentazione dell'API di PiggyPocket - Endpoint Dettaglio Transazione
+## PiggyPocket API Documentation - Transaction Detail Endpoint
 
-Questo documento fornisce una descrizione dell'endpoint API per ottenere il dettaglio di una transazione specifica dell'utente corrente (`/api/transactions/@me/:id`) nell'applicazione PiggyPocket.
+This document provides a description of the API endpoint for retrieving specific transaction details of the current user (`/api/transactions/@me/:id`) in the PiggyPocket application.
 
-### Struttura del Database
+### Database Structure
 
-Il database contiene la tabella `expenses` con i seguenti campi:
+The database contains the `expenses` table with the following fields:
 
-- `id`: Identificatore della transazione (di tipo `TEXT`).
-- `user_id`: Identificatore dell'utente proprietario della transazione (di tipo `TEXT`).
-- `date`: Data della transazione (di tipo `TEXT`).
-- `amount`: Importo della transazione (di tipo `REAL`).
-- `description`: Descrizione della transazione (di tipo `TEXT`).
-- `category`: Categoria della transazione (di tipo `TEXT`).
-- `payee`: Beneficiario della transazione (di tipo `TEXT`).
+- `id`: Transaction identifier (of type `TEXT`).
+- `user_id`: Identifier of the user who owns the transaction (of type `TEXT`).
+- `date`: Transaction date (of type `TEXT`).
+- `amount`: Transaction amount (of type `REAL`).
+- `description`: Transaction description (of type `TEXT`).
+- `category`: Transaction category (of type `TEXT`).
+- `payee`: Payee of the transaction (of type `TEXT`).
 
-### Endpoint API
+### API Endpoint
 
-Il seguente endpoint API è disponibile per ottenere il dettaglio di una transazione specifica dell'utente corrente:
+The following API endpoint is available for retrieving specific transaction details of the current user:
 
 - **GET /api/transactions/@me/:id**
 
-  Questo endpoint restituisce il dettaglio di una transazione specifica dell'utente corrente in base all'ID della transazione fornito. L'utente deve essere autenticato per accedere a questo endpoint.
+  This endpoint returns the details of a specific transaction of the current user based on the provided transaction ID. The user must be authenticated to access this endpoint.
 
-  Parametri dell'URL:
-  - `id`: ID della transazione da ottenere.
+  URL Parameters:
+  - `id`: ID of the transaction to retrieve.
 
-  Esempio di richiesta:
+  Example request:
   ```
   GET /api/transactions/@me/123456 HTTP/1.1
   Host: example.com
-  Authorization: <token_di_autenticazione>
+  Authorization: <authentication_token>
   ```
 
-  Esempio di risposta:
+  Example response:
   ```json
   {
     "id": "123456",
     "user_id": "7890",
     "date": "2023-05-20",
     "amount": 25.0,
-    "description": "Spesa al supermercato",
+    "description": "Grocery shopping",
     "category": "groceries",
     "payee": "Supermarket XYZ"
   }
   ```
 
-  **Note**:
-  - Assicurati di includere l'header `Authorization` nella richiesta con il token di autenticazione valido per accedere alla transazione dell'utente corrente.
-  - L'ID della transazione è specificato come parametro nell'URL.
-  - La risposta restituisce il dettaglio completo della transazione corrispondente all'ID fornito.
+  **Notes**:
+  - Ensure to include the `Authorization` header in the request with the valid authentication token to access the specific transaction of the current user.
+  - The transaction ID is specified as a parameter in the URL.
+  - The response returns the complete details of the transaction corresponding to the provided ID.
 
-*Ricorda di proteggere le informazioni dell'utente e di trattarle come dati sensibili. Assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione dei dati durante le richieste API.*
+*Remember to protect user information and treat it as sensitive data. Ensure to use secure connections (HTTPS) to protect data transmission during API requests.*
 
-## Documentazione dell'API di PiggyPocket - Endpoint Immagine Beneficiario
+## PiggyPocket API Documentation - Payee Image Endpoint
 
-Questo documento fornisce una descrizione dell'endpoint API per ottenere l'immagine di un beneficiario specifico (`/api/payee_picture/:id`) nell'applicazione PiggyPocket.
+This document provides a description of the API endpoint for obtaining the image of a specific payee (`/api/payee_picture/:id`) in the PiggyPocket application.
 
-### Endpoint API
+### API Endpoint
 
-Il seguente endpoint API è disponibile per ottenere l'immagine di un beneficiario specifico:
+The following API endpoint is available for obtaining the image of a specific payee:
 
 - **GET /api/payee_picture/:id**
 
-  Questo endpoint restituisce l'immagine corrispondente al beneficiario specificato in base all'ID fornito. L'immagine sarà presa dalla cartella `/assets/payees` dell'applicazione PiggyPocket.
+  This endpoint returns the image corresponding to the specified payee based on the provided ID. The image will be fetched from the `/assets/payees` folder of the PiggyPocket application.
 
-  Parametri dell'URL:
-  - `id`: ID del beneficiario.
+  URL Parameters:
+  - `id`: Payee ID.
 
-  Esempio di richiesta:
+  Example request:
   ```
   GET /api/payee_picture/123456 HTTP/1.1
   Host: example.com
   ```
 
-  Esempio di risposta:
-  - Se l'immagine del beneficiario esiste nella cartella `/assets/payees` con il nome `123456.png`, verrà restituita l'immagine corrispondente.
-  - Se l'immagine del beneficiario non esiste, verrà restituita un'immagine predefinita denominata `default.png` dalla cartella `/assets/payees`.
+  Example response:
+  - If the payee's image exists in the `/assets/payees` folder with the name `123456.png`, the corresponding image will be returned.
+  - If the payee's image does not exist, a default image named `default.png` from the `/assets/payees` folder will be returned.
 
-  **Note**:
-  - L'ID del beneficiario è specificato come parametro nell'URL.
-  - Assicurati che la cartella `/assets/payees` contenga le immagini dei beneficiari nel formato corretto (ad esempio, `123456.png`) e l'immagine predefinita `default.png`.
-  - La risposta restituirà l'immagine corrispondente al beneficiario specificato o l'immagine predefinita se non esiste l'immagine del beneficiario.
+  **Notes**:
+  - The payee's ID is specified as a parameter in the URL.
+  - Ensure that the `/assets/payees` folder contains payee images in the correct format (e.g., `123456.png`) and the default image `default.png`.
+  - The response will return the image corresponding to the specified payee or the default image if the payee's image does not exist.
 
-*Ricorda di proteggere le informazioni dell'utente e di trattarle come dati sensibili. Assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione dei dati durante le richieste API.*
+*Remember to protect user information and treat it as sensitive data. Ensure to use secure connections (HTTPS) to protect data transmission during API requests.*
 
-## Documentazione dell'API di PiggyPocket - Endpoint Categorie dell'Utente
+## PiggyPocket API Documentation - User Categories Endpoint
 
-Questo documento fornisce una descrizione dell'endpoint API per ottenere le categorie dell'utente (`/api/categories/@me`) nell'applicazione PiggyPocket.
+This document provides a description of the API endpoint for obtaining user categories (`/api/categories/@me`) in the PiggyPocket application.
 
-### Endpoint API
+### API Endpoint
 
-Il seguente endpoint API è disponibile per ottenere le categorie dell'utente:
+The following API endpoint is available for obtaining user categories:
 
 - **GET /api/categories/@me**
 
-  Questo endpoint restituisce un elenco delle categorie utilizzate dall'utente, comprese le categorie di default predefinite.
+  This endpoint returns a list of categories used by the user, including predefined default categories.
 
-  Esempio di richiesta:
+  Example request:
   ```
   GET /api/categories/@me HTTP/1.1
   Host: example.com
   ```
 
-  Esempio di risposta:
+  Example response:
   ```
   [
     "Food",
@@ -280,32 +278,32 @@ Il seguente endpoint API è disponibile per ottenere le categorie dell'utente:
   ]
   ```
 
-  **Note**:
-  - L'endpoint restituirà un array di categorie che includerà sia le categorie utilizzate dall'utente che le categorie di default predefinite.
-  - Le categorie utilizzate dall'utente sono ottenute dalla tabella `expenses` del database in base all'ID dell'utente corrente.
-  - Le categorie di default predefinite sono definite nell'array `defaultCategories` nel codice.
+  **Notes**:
+  - The endpoint will return an array of categories that includes both user-used categories and predefined default categories.
+  - User-used categories are retrieved from the `expenses` table of the database based on the current user's ID.
+  - Predefined default categories are defined in the `defaultCategories` array in the code.
 
-*Ricorda di proteggere le informazioni dell'utente e di trattarle come dati sensibili. Assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione dei dati durante le richieste API.*
+*Remember to protect user information and treat it as sensitive data. Ensure to use secure connections (HTTPS) to protect data transmission during API requests.*
 
-## Documentazione dell'API di PiggyPocket - Endpoint Beneficiari dell'Utente
+## PiggyPocket API Documentation - User Payees Endpoint
 
-Questo documento fornisce una descrizione dell'endpoint API per ottenere i beneficiari dell'utente (`/api/payees/@me`) nell'applicazione PiggyPocket.
+This document provides a description of the API endpoint for obtaining user payees (`/api/payees/@me`) in the PiggyPocket application.
 
-### Endpoint API
+### API Endpoint
 
-Il seguente endpoint API è disponibile per ottenere i beneficiari dell'utente:
+The following API endpoint is available for obtaining user payees:
 
 - **GET /api/payees/@me**
 
-  Questo endpoint restituisce un elenco dei beneficiari utilizzati dall'utente, compresi i beneficiari predefiniti predefiniti.
+  This endpoint returns a list of payees used by the user, including predefined default payees.
 
-  Esempio di richiesta:
+  Example request:
   ```
   GET /api/payees/@me HTTP/1.1
   Host: example.com
   ```
 
-  Esempio di risposta:
+  Example response:
   ```
   [
     "Netflix",
@@ -322,38 +320,38 @@ Il seguente endpoint API è disponibile per ottenere i beneficiari dell'utente:
   ]
   ```
 
-  **Note**:
-  - L'endpoint restituirà un array di beneficiari che includerà sia i beneficiari utilizzati dall'utente che i beneficiari predefiniti predefiniti.
-  - I beneficiari utilizzati dall'utente sono ottenuti dalla tabella `expenses` del database in base all'ID dell'utente corrente.
-  - I beneficiari predefiniti predefiniti sono definiti nell'array `defaultPayees` nel codice.
+  **Notes**:
+  - The endpoint will return an array of payees that includes both user-used payees and predefined default payees.
+  - User-used payees are retrieved from the `expenses` table of the database based on the current user's ID.
+  - Predefined default payees are defined in the `defaultPayees` array in the code.
 
-*Ricorda di proteggere le informazioni dell'utente e di trattarle come dati sensibili. Assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione dei dati durante le richieste API.*
+*Remember to protect user information and treat it as sensitive data. Ensure to use secure connections (HTTPS) to protect data transmission during API requests.*
 
-## Documentazione dell'API di PiggyPocket - Endpoint Aggiungi Transazione
+## PiggyPocket API Documentation - Add Transaction Endpoint
 
-Questo documento fornisce una descrizione dell'endpoint API per aggiungere una nuova transazione (`/api/transactions/@me`) nell'applicazione PiggyPocket.
+This document provides a description of the API endpoint for adding a new transaction (`/api/transactions/@me`) in the PiggyPocket application.
 
-### Struttura del Database
+### Database Structure
 
-Il database contiene la tabella `expenses` con i seguenti campi:
+The database contains the `expenses` table with the following fields:
 
-- `id`: Identificatore della transazione (di tipo `TEXT`).
-- `user_id`: Identificatore dell'utente proprietario della transazione (di tipo `TEXT`).
-- `date`: Data della transazione (di tipo `TEXT`).
-- `amount`: Importo della transazione (di tipo `REAL`).
-- `description`: Descrizione della transazione (di tipo `TEXT`).
-- `category`: Categoria della transazione (di tipo `TEXT`).
-- `payee`: Beneficiario della transazione (di tipo `TEXT`).
+- `id`: Transaction identifier (of type `TEXT`).
+- `user_id`: Identifier of the transaction owner (of type `TEXT`).
+- `date`: Transaction date (of type `TEXT`).
+- `amount`: Transaction amount (of type `REAL`).
+- `description`: Transaction description (of type `TEXT`).
+- `category`: Transaction category (of type `TEXT`).
+- `payee`: Transaction payee (of type `TEXT`).
 
-### Endpoint API
+### API Endpoint
 
-Il seguente endpoint API è disponibile per aggiungere una nuova transazione:
+The following API endpoint is available for adding a new transaction:
 
 - **POST /api/transactions/@me**
 
-  Questo endpoint consente di aggiungere una nuova transazione per l'utente corrente.
+  This endpoint allows adding a new transaction for the current user.
 
-  Esempio di richiesta:
+  Example request:
   ```
   POST /api/transactions/@me HTTP/1.1
   Host: example.com
@@ -361,24 +359,24 @@ Il seguente endpoint API è disponibile per aggiungere una nuova transazione:
 
   {
     "payee": "Netflix",
-    "category": "Abbonamenti",
-    "description": "Abbonamento mensile a Netflix",
+    "category": "Subscriptions",
+    "description": "Monthly subscription to Netflix",
     "amount": 12.99,
     "date": "2023-05-21"
   }
   ```
 
-  Esempio di risposta (successo):
+  Example success response:
   ```
   HTTP/1.1 201 Created
   Content-Type: application/json
 
   {
-    "id": 12345
+    "id": "12345"
   }
   ```
 
-  Esempio di risposta (errore):
+  Example error response:
   ```
   HTTP/1.1 400 Bad Request
   Content-Type: application/json
@@ -388,45 +386,45 @@ Il seguente endpoint API è disponibile per aggiungere una nuova transazione:
   }
   ```
 
-  **Note**:
-  - L'endpoint richiede l'autenticazione dell'utente per aggiungere una transazione al suo account.
-  - I dati della transazione vengono inviati nel corpo della richiesta in formato JSON.
-  - Prima di aggiungere la transazione, vengono effettuati controlli appropriati per verificare la validità dei dati:
-    - Il beneficiario (`payee`) è obbligatorio.
-    - La categoria (`category`) è obbligatoria.
-    - La descrizione (`description`) è obbligatoria.
-    - L'importo (`amount`) è obbligatorio e deve essere un numero.
-    - La data (`date`) è obbligatoria e deve essere una data valida.
-  - Se tutti i controlli vengono superati correttamente, la transazione viene aggiunta al database e viene restituito l'ID della transazione appena creata.
-  - In caso di errori durante l'aggiunta della transazione, verrà restituito un messaggio di errore appropriato.
+  **Notes**:
+  - The endpoint requires user authentication to add a transaction to their account.
+  - Transaction data is sent in the request body in JSON format.
+  - Before adding the transaction, appropriate checks are made to verify the validity of the data:
+    - Payee (`payee`) is required.
+    - Category (`category`) is required.
+    - Description (`description`) is required.
+    - Amount (`amount`) is required and must be a number.
+    - Date (`date`) is required and must be a valid date.
+  - If all checks are passed successfully, the transaction is added to the database, and the ID of the newly created transaction is returned.
+  - In case of errors during the transaction addition, an appropriate error message will be returned.
 
-*Ricorda di proteggere le informazioni dell'utente e di trattarle come dati sensibili. Assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione dei dati durante le richieste API.*
+*Remember to protect user information and treat it as sensitive data. Ensure to use secure connections (HTTPS) to protect data transmission during API requests.*
 
-## Documentazione dell'API di PiggyPocket - Endpoint Modifica Transazione
+## PiggyPocket API Documentation - Update Transaction Endpoint
 
-Questo documento fornisce una descrizione dell'endpoint API per modificare una transazione esistente (`/api/transactions/@me/:id`) nell'applicazione PiggyPocket.
+This document provides a description of the API endpoint for updating an existing transaction (`/api/transactions/@me/:id`) in the PiggyPocket application.
 
-### Struttura del Database
+### Database Structure
 
-Il database contiene la tabella `expenses` con i seguenti campi:
+The database contains the `expenses` table with the following fields:
 
-- `id`: Identificatore della transazione (di tipo `TEXT`).
-- `user_id`: Identificatore dell'utente proprietario della transazione (di tipo `TEXT`).
-- `date`: Data della transazione (di tipo `TEXT`).
-- `amount`: Importo della transazione (di tipo `REAL`).
-- `description`: Descrizione della transazione (di tipo `TEXT`).
-- `category`: Categoria della transazione (di tipo `TEXT`).
-- `payee`: Beneficiario della transazione (di tipo `TEXT`).
+- `id`: Transaction identifier (of type `TEXT`).
+- `user_id`: Identifier of the transaction owner (of type `TEXT`).
+- `date`: Transaction date (of type `TEXT`).
+- `amount`: Transaction amount (of type `REAL`).
+- `description`: Transaction description (of type `TEXT`).
+- `category`: Transaction category (of type `TEXT`).
+- `payee`: Transaction payee (of type `TEXT`).
 
-### Endpoint API
+### API Endpoint
 
-Il seguente endpoint API è disponibile per modificare una transazione esistente:
+The following API endpoint is available for updating an existing transaction:
 
 - **PUT /api/transactions/@me/:id**
 
-  Questo endpoint consente di modificare una transazione per l'utente corrente, specificando l'ID della transazione da modificare come parte dell'URL.
+  This endpoint allows modifying a transaction for the current user, specifying the ID of the transaction to be modified as part of the URL.
 
-  Esempio di richiesta:
+  Example request:
   ```
   PUT /api/transactions/@me/12345 HTTP/1.1
   Host: example.com
@@ -434,24 +432,24 @@ Il seguente endpoint API è disponibile per modificare una transazione esistente
 
   {
     "payee": "Netflix",
-    "category": "Intrattenimento",
-    "description": "Abbonamento mensile a Netflix",
+    "category": "Entertainment",
+    "description": "Monthly subscription to Netflix",
     "amount": 15.99,
     "date": "2023-05-21"
   }
   ```
 
-  Esempio di risposta (successo):
+  Example success response:
   ```
   HTTP/1.1 200 OK
   Content-Type: application/json
 
   {
-    "id": 12345
+    "id": "12345"
   }
   ```
 
-  Esempio di risposta (errore):
+  Example error response:
   ```
   HTTP/1.1 400 Bad Request
   Content-Type: application/json
@@ -461,63 +459,65 @@ Il seguente endpoint API è disponibile per modificare una transazione esistente
   }
   ```
 
-  **Note**:
-  - L'endpoint richiede l'autenticazione dell'utente per modificare una transazione nel suo account.
-  - L'ID della transazione da modificare viene specificato come parte dell'URL.
-  - I dati della transazione da modificare vengono inviati nel corpo della richiesta in formato JSON.
-  - Prima di effettuare la modifica, vengono effettuati controlli appropriati per verificare la validità dei dati:
-    - Il beneficiario (`payee`) è obbligatorio.
-    - La categoria (`category`) è obbligatoria.
-    - La descrizione (`description`) è obbligatoria.
-    - L'importo (`amount`) è obbligatorio e deve essere un numero.
-    - La data (`date`) è obbligatoria e deve essere una data valida.
-  - Se tutti i controlli vengono superati correttamente, la transazione nel database viene modificata con i nuovi dati forniti.
-  - In caso di successo, viene restituito l'ID della transazione modificata.
-  - In caso di errori durante la modifica della transazione, verrà restituito un messaggio di errore appropriato.
+  **Notes**:
+  - The endpoint requires user authentication to modify a transaction in their account.
+  - The ID of the transaction to be modified is specified as part of the URL.
+  - The transaction data to be modified is sent in the request body in JSON format.
+  - Before making the modification, appropriate checks are made to verify the validity of the data:
+    - Payee (`payee`) is required.
+    - Category (`category`) is required.
+    - Description (`description`) is required.
+    - Amount (`amount`) is required and must be a number.
+    - Date (`date`) is required and must be a valid date.
+  - If all checks are passed successfully, the transaction in the database is updated with the new provided data.
+  - In case of success, the ID of the updated transaction is returned.
+  - In case of errors during the transaction update, an appropriate error message will be returned.
 
-*Ricorda di proteggere le informazioni dell'utente e di trattarle come dati sensibili. Assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione dei dati durante le richieste API.*
+*Remember to protect user information and treat it as sensitive data. Ensure to use secure connections (HTTPS) to protect data transmission during API requests.*
 
-## Documentazione dell'API di PiggyPocket - Endpoint Elimina Transazione
+---
 
-Questo documento fornisce una descrizione dell'endpoint API per eliminare una transazione esistente (`/api/transactions/@me/:id`) nell'applicazione PiggyPocket.
+## PiggyPocket API Documentation - Delete Transaction Endpoint
 
-### Struttura del Database
+This document provides a description of the API endpoint for deleting an existing transaction (`/api/transactions/@me/:id`) in the PiggyPocket application.
 
-Il database contiene la tabella `expenses` con i seguenti campi:
+### Database Structure
 
-- `id`: Identificatore della transazione (di tipo `TEXT`).
-- `user_id`: Identificatore dell'utente proprietario della transazione (di tipo `TEXT`).
-- `date`: Data della transazione (di tipo `TEXT`).
-- `amount`: Importo della transazione (di tipo `REAL`).
-- `description`: Descrizione della transazione (di tipo `TEXT`).
-- `category`: Categoria della transazione (di tipo `TEXT`).
-- `payee`: Beneficiario della transazione (di tipo `TEXT`).
+The database contains the `expenses` table with the following fields:
 
-### Endpoint API
+- `id`: Transaction identifier (of type `TEXT`).
+- `user_id`: Identifier of the transaction owner (of type `TEXT`).
+- `date`: Transaction date (of type `TEXT`).
+- `amount`: Transaction amount (of type `REAL`).
+- `description`: Transaction description (of type `TEXT`).
+- `category`: Transaction category (of type `TEXT`).
+- `payee`: Transaction payee (of type `TEXT`).
 
-Il seguente endpoint API è disponibile per eliminare una transazione esistente:
+### API Endpoint
+
+The following API endpoint is available for deleting an existing transaction:
 
 - **DELETE /api/transactions/@me/:id**
 
-  Questo endpoint consente di eliminare una transazione per l'utente corrente, specificando l'ID della transazione da eliminare come parte dell'URL.
+  This endpoint allows deleting a transaction for the current user, specifying the ID of the transaction to be deleted as part of the URL.
 
-  Esempio di richiesta:
+  Example request:
   ```
   DELETE /api/transactions/@me/12345 HTTP/1.1
   Host: example.com
   ```
 
-  Esempio di risposta (successo):
+  Example success response:
   ```
   HTTP/1.1 200 OK
   Content-Type: application/json
 
   {
-    "id": 12345
+    "id": "12345"
   }
   ```
 
-  Esempio di risposta (errore):
+  Example error response:
   ```
   HTTP/1.1 500 Internal Server Error
   Content-Type: application/json
@@ -527,35 +527,35 @@ Il seguente endpoint API è disponibile per eliminare una transazione esistente:
   }
   ```
 
-  **Note**:
-  - L'endpoint richiede l'autenticazione dell'utente per eliminare una transazione dal suo account.
-  - L'ID della transazione da eliminare viene specificato come parte dell'URL.
-  - Se esiste una transazione corrispondente all'ID specificato e appartenente all'utente corrente, verrà eliminata dal database.
-  - In caso di successo, viene restituito l'ID della transazione eliminata.
-  - In caso di errori durante l'eliminazione della transazione, verrà restituito un messaggio di errore appropriato.
+  **Notes**:
+  - The endpoint requires user authentication to delete a transaction from their account.
+  - The ID of the transaction to be deleted is specified as part of the URL.
+  - If there is a transaction corresponding to the specified ID and belonging to the current user, it will be deleted from the database.
+  - In case of success, the ID of the deleted transaction is returned.
+  - In case of errors during the transaction deletion, an appropriate error message will be returned.
 
-*Ricorda di proteggere le informazioni dell'utente e di trattarle come dati sensibili. Assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione dei dati durante le richieste API.*
+*Remember to protect user information and treat it as sensitive data. Ensure to use secure connections (HTTPS) to protect data transmission during API requests.*
 
-## Documentazione dell'API di PiggyPocket - Endpoint Statistiche Utente
+## PiggyPocket API Documentation - User Statistics Endpoint
 
-Questo documento fornisce una descrizione dell'endpoint API per ottenere le statistiche dell'utente (`/api/stats/@me`) nell'applicazione PiggyPocket.
+This document provides a description of the API endpoint for retrieving user statistics (`/api/stats/@me`) in the PiggyPocket application.
 
-### Endpoint API
+### API Endpoint
 
-Il seguente endpoint API è disponibile per ottenere le statistiche dell'utente:
+The following API endpoint is available for retrieving user statistics:
 
 - **GET /api/stats/@me**
 
-  Questo endpoint consente di recuperare le statistiche relative alle spese e ai guadagni dell'utente corrente negli ultimi 12 mesi.
+  This endpoint allows fetching statistics related to the current user's expenses and earnings for the last 12 months.
 
-  Esempio di richiesta:
+  Example request:
   ```
   GET /api/stats/@me HTTP/1.1
   Host: example.com
   Authorization: <token>
   ```
 
-  Esempio di risposta (successo):
+  Example success response:
   ```
   HTTP/1.1 200 OK
   Content-Type: application/json
@@ -563,11 +563,11 @@ Il seguente endpoint API è disponibile per ottenere le statistiche dell'utente:
   {
     "category": [
       {
-        "category": "Alimentari",
+        "category": "Groceries",
         "total_amount": 250.0
       },
       {
-        "category": "Trasporti",
+        "category": "Transportation",
         "total_amount": 120.0
       },
       ...
@@ -608,7 +608,7 @@ Il seguente endpoint API è disponibile per ottenere le statistiche dell'utente:
   }
   ```
 
-  Esempio di risposta (errore):
+  Example error response:
   ```
   HTTP/1.1 500 Internal Server Error
   Content-Type: application/json
@@ -618,35 +618,37 @@ Il seguente endpoint API è disponibile per ottenere le statistiche dell'utente:
   }
   ```
 
-  **Note**:
-  - L'endpoint richiede l'autenticazione dell'utente tramite il token di accesso.
-  - Le statistiche fornite includono informazioni sulle categorie di spese, le spese mensili, i guadagni mensili e le transazioni settimanali dell'utente negli ultimi 12 mesi.
-  - I dati sono raggruppati e restituiti in formato JSON.
-  - In caso di successo, viene restituito un oggetto JSON che contiene le statistiche.
-  - In caso di errori durante il recupero dei dati statistici, verrà restituito un messaggio di errore appropriato.
+  **Notes**:
+  - The endpoint requires user authentication via the access token.
+  - The provided statistics include information about expense categories, monthly expenses, monthly earnings, and weekly transactions of the user for the last 12 months.
+  - Data is grouped and returned in JSON format.
+  - In case of success, a JSON object containing the statistics is returned.
+  - In case of errors during the retrieval of statistical data, an appropriate error message will be returned.
 
-*Ricorda di proteggere le informazioni dell'utente e di trattarle come dati sensibili. Assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione dei dati durante le richieste API.*
+*Remember to protect user information and treat it as sensitive data. Ensure to use secure connections (HTTPS) to protect data transmission during API requests.*
 
-## Documentazione dell'API di PiggyPocket - Endpoint Dati Utente
+---
 
-Questo documento fornisce una descrizione dell'endpoint API per ottenere tutti i dati dell'utente (`/api/data/@me`) nell'applicazione PiggyPocket.
+## PiggyPocket API Documentation - User Data Endpoint
 
-### Endpoint API
+This document provides a description of the API endpoint for retrieving all user data (`/api/data/@me`) in the PiggyPocket application.
 
-Il seguente endpoint API è disponibile per ottenere tutti i dati dell'utente:
+### API Endpoint
+
+The following API endpoint is available for retrieving all user data:
 
 - **GET /api/data/@me**
 
-  Questo endpoint consente di recuperare tutte le informazioni dell'utente, comprese le spese e i rapporti associati.
+  This endpoint allows fetching all user information, including expenses and associated reports.
 
-  Esempio di richiesta:
+  Example request:
   ```
   GET /api/data/@me HTTP/1.1
   Host: example.com
   Authorization: <token>
   ```
 
-  Esempio di risposta (successo):
+  Example success response:
   ```
   HTTP/1.1 200 OK
   Content-Type: application/json
@@ -664,8 +666,8 @@ Il seguente endpoint API è disponibile per ottenere tutti i dati dell'utente:
         "user_id": "123456789",
         "date": "2023-05-20",
         "amount": 50.0,
-        "description": "Spesa supermercato",
-        "category": "Alimentari",
+        "description": "Grocery shopping",
+        "category": "Groceries",
         "payee": "Esselunga"
       },
       {
@@ -673,8 +675,8 @@ Il seguente endpoint API è disponibile per ottenere tutti i dati dell'utente:
         "user_id": "123456789",
         "date": "2023-05-18",
         "amount": 25.0,
-        "description": "Benzina",
-        "category": "Trasporti",
+        "description": "Gasoline",
+        "category": "Transportation",
         "payee": "Q8"
       },
       ...
@@ -685,21 +687,21 @@ Il seguente endpoint API è disponibile per ottenere tutti i dati dell'utente:
         "user_id": "123456789",
         "year": 2023,
         "month": 5,
-        "content": "Questo è il report del mese di maggio 2023."
+        "content": "This is the report for May 2023."
       },
       {
         "id": "r987654321",
         "user_id": "123456789",
         "year": 2023,
         "month": 4,
-        "content": "Questo è il report del mese di aprile 2023."
+        "content": "This is the report for April 2023."
       },
       ...
     ]
   }
   ```
 
-  Esempio di risposta (errore):
+  Example error response:
   ```
   HTTP/1.1 500 Internal Server Error
   Content-Type: application/json
@@ -709,36 +711,36 @@ Il seguente endpoint API è disponibile per ottenere tutti i dati dell'utente:
   }
   ```
 
-  **Note**:
-  - L'endpoint richiede l'autenticazione dell'utente tramite il token di accesso.
-  - Vengono restituite tutte le informazioni dell'utente, compresi i dettagli dell'utente, le spese e i rapporti associati.
-  - I dati delle spese vengono ordinati in base alla data decrescente.
-  - I dati dei rapporti vengono ordinati in base alla data (anno e mese) decrescente.
-  - In caso di successo, viene restituito un oggetto JSON che contiene le informazioni dell'utente, le spese e i rapporti.
-  - In caso di errori durante il recupero dei dati dell'utente, verrà restituito un messaggio di errore appropriato.
+  **Notes**:
+  - The endpoint requires user authentication via the access token.
+  - All user information is returned, including user details, expenses, and associated reports.
+  - Expense data is sorted by descending date.
+  - Report data is sorted by date (year and month) in descending order.
+  - In case of success, a JSON object containing user information, expenses, and reports is returned.
+  - In case of errors during the retrieval of user data, an appropriate error message will be returned.
 
-*Ricorda di proteggere le informazioni dell'utente e di trattarle come dati sensibili. Assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione dei dati durante le richieste API.*
+*Remember to protect user information and treat it as sensitive data. Ensure to use secure connections (HTTPS) to protect data transmission during API requests.*
 
-## Documentazione dell'API di PiggyPocket - Endpoint Panoramica
+## PiggyPocket API Documentation - Overview Endpoint
 
-Questo documento fornisce una descrizione dell'endpoint API per ottenere i dati di panoramica dell'utente (`/api/overview/@me`) nell'applicazione PiggyPocket.
+This document provides a description of the API endpoint for retrieving user overview data (`/api/overview/@me`) in the PiggyPocket application.
 
-### Endpoint API
+### API Endpoint
 
-Il seguente endpoint API è disponibile per ottenere i dati di panoramica dell'utente:
+The following API endpoint is available for retrieving user overview data:
 
 - **GET /api/overview/@me**
 
-  Questo endpoint consente di recuperare il conteggio delle transazioni, l'importo totale delle spese e l'importo totale dei guadagni suddivisi per mese.
+  This endpoint allows you to retrieve the transaction count, total expenses, and total income grouped by month.
 
-  Esempio di richiesta:
+  Example request:
   ```
   GET /api/overview/@me HTTP/1.1
   Host: example.com
   Authorization: <token>
   ```
 
-  Esempio di risposta (successo):
+  Example response (success):
   ```
   HTTP/1.1 200 OK
   Content-Type: application/json
@@ -780,7 +782,7 @@ Il seguente endpoint API è disponibile per ottenere i dati di panoramica dell'u
   }
   ```
 
-  Esempio di risposta (errore):
+  Example response (error):
   ```
   HTTP/1.1 500 Internal Server Error
   Content-Type: application/json
@@ -790,35 +792,35 @@ Il seguente endpoint API è disponibile per ottenere i dati di panoramica dell'u
   }
   ```
 
-  **Note**:
-  - L'endpoint richiede l'autenticazione dell'utente tramite il token di accesso.
-  - Vengono restituiti il conteggio delle transazioni, l'importo totale delle spese e l'importo totale dei guadagni suddivisi per mese.
-  - I dati vengono ordinati in base al mese in ordine decrescente.
-  - In caso di successo, viene restituito un oggetto JSON che contiene il conteggio delle transazioni, l'importo totale delle spese e l'importo totale dei guadagni.
-  - In caso di errori durante il recupero dei dati di panoramica, verrà restituito un messaggio di errore appropriato.
+  **Notes**:
+  - The endpoint requires user authentication via the access token.
+  - The response includes the transaction count, total expenses, and total income grouped by month.
+  - Data is sorted by month in descending order.
+  - In case of success, a JSON object containing the transaction count, total expenses, and total income is returned.
+  - In case of errors during the retrieval of overview data, an appropriate error message will be returned.
 
-*Ricorda di proteggere le informazioni dell'utente e di trattarle come dati sensibili. Assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione dei dati durante le richieste API.*
+*Remember to protect user information and treat it as sensitive data. Ensure secure connections (HTTPS) are used to protect data transmission during API requests.*
 
-## Documentazione dell'API di PiggyPocket - Endpoint Rapporto Singolo
+## PiggyPocket API Documentation - Single Report Endpoint
 
-Questo documento fornisce una descrizione dell'endpoint API per ottenere i dati di un singolo rapporto dell'utente (`/api/reports/@me/:yearmonth`) nell'applicazione PiggyPocket.
+This document provides a description of the API endpoint for retrieving a user's single report data (`/api/reports/@me/:yearmonth`) in the PiggyPocket application.
 
-### Endpoint API
+### API Endpoint
 
-Il seguente endpoint API è disponibile per ottenere i dati di un singolo rapporto dell'utente:
+The following API endpoint is available for retrieving a user's single report data:
 
 - **GET /api/reports/@me/:yearmonth**
 
-  Questo endpoint consente di recuperare i dati di un rapporto specifico dell'utente in base all'anno e al mese forniti.
+  This endpoint allows you to retrieve specific user report data based on the provided year and month.
 
-  Esempio di richiesta:
+  Example request:
   ```
   GET /api/reports/@me/2023-05 HTTP/1.1
   Host: example.com
   Authorization: <token>
   ```
 
-  Esempio di risposta (successo):
+  Example response (success):
   ```
   HTTP/1.1 200 OK
   Content-Type: application/json
@@ -828,11 +830,11 @@ Il seguente endpoint API è disponibile per ottenere i dati di un singolo rappor
     "user_id": "user_id",
     "year": 2023,
     "month": 5,
-    "content": "Contenuto del rapporto"
+    "content": "Report content"
   }
   ```
 
-  Esempio di risposta (nessun rapporto trovato):
+  Example response (no report found):
   ```
   HTTP/1.1 200 OK
   Content-Type: application/json
@@ -842,7 +844,7 @@ Il seguente endpoint API è disponibile per ottenere i dati di un singolo rappor
   }
   ```
 
-  Esempio di risposta (errore):
+  Example response (error):
   ```
   HTTP/1.1 500 Internal Server Error
   Content-Type: application/json
@@ -852,29 +854,29 @@ Il seguente endpoint API è disponibile per ottenere i dati di un singolo rappor
   }
   ```
 
-  **Note**:
-  - L'endpoint richiede l'autenticazione dell'utente tramite il token di accesso.
-  - L'anno e il mese del rapporto vengono specificati nel percorso dell'URL come `:yearmonth` nel formato "YYYY-MM" (ad esempio, "2023-05" per maggio 2023).
-  - Viene effettuata una ricerca nel database per il rapporto corrispondente all'utente, all'anno e al mese forniti.
-  - In caso di successo, viene restituito un oggetto JSON che contiene i dati del rapporto, inclusi l'ID del rapporto, l'ID dell'utente, l'anno, il mese e il contenuto del rapporto.
-  - Se nessun rapporto viene trovato corrispondente all'utente, all'anno e al mese forniti, viene restituito un oggetto JSON vuoto con il campo "content" impostato su una stringa vuota.
-  - In caso di errori durante il recupero dei dati del rapporto, verrà restituito un messaggio di errore appropriato.
+  **Notes**:
+  - The endpoint requires user authentication via the access token.
+  - The report's year and month are specified in the URL path as `:yearmonth` in the "YYYY-MM" format (e.g., "2023-05" for May 2023).
+  - A search is made in the database for the report corresponding to the user, provided year, and month.
+  - In case of success, a JSON object containing the report data, including the report ID, user ID, year, month, and report content, is returned.
+  - If no report is found corresponding to the user, provided year, and month, an empty JSON object with the "content" field set to an empty string is returned.
+  - In case of errors during the retrieval of the report data, an appropriate error message will be returned.
 
-*Ricorda di proteggere le informazioni dell'utente e di trattarle come dati sensibili. Assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione dei dati durante le richieste API.*
+*Remember to protect user information and treat it as sensitive data. Ensure secure connections (HTTPS) are used to protect data transmission during API requests.*
 
-## Documentazione dell'API di PiggyPocket - Endpoint Creazione/Aggiornamento Rapporto
+## PiggyPocket API Documentation - Create/Update Report Endpoint
 
-Questo documento fornisce una descrizione dell'endpoint API per creare o aggiornare un rapporto dell'utente nell'applicazione PiggyPocket (`/api/reports/@me/:yearmonth`).
+This document provides a description of the API endpoint for creating or updating a user's report in the PiggyPocket application (`/api/reports/@me/:yearmonth`).
 
-### Endpoint API
+### API Endpoint
 
-Il seguente endpoint API è disponibile per creare o aggiornare un rapporto dell'utente:
+The following API endpoint is available for creating or updating a user's report:
 
 - **POST /api/reports/@me/:yearmonth**
 
-  Questo endpoint consente di creare o aggiornare un rapporto dell'utente in base all'anno e al mese forniti. Utilizza l'intelligenza artificiale per generare una risposta basata sulle spese dell'utente.
+  This endpoint allows you to create or update a user's report based on the provided year and month. It uses artificial intelligence to generate a response based on the user's expenses.
 
-  Esempio di richiesta:
+  Example request:
   ```
   POST /api/reports/@me/2023-05 HTTP/1.1
   Host: example.com
@@ -884,17 +886,17 @@ Il seguente endpoint API è disponibile per creare o aggiornare un rapporto dell
   {}
   ```
 
-  Esempio di risposta (successo):
+  Example response (success):
   ```
   HTTP/1.1 200 OK
   Content-Type: application/json
 
   {
-    "content": "Ecco alcuni consigli per migliorare la tua situazione finanziaria:\n\n- Riduci le spese per l'alloggio cercando soluzioni abitative più economiche o coinquilini.\n- Fai attenzione alle tue spese alimentari, cerca offerte e promozioni nei supermercati.\n- Considera l'utilizzo di app o strumenti per la gestione del budget per tenere traccia delle tue spese mensili."
+    "content": "Here are some tips to improve your financial situation:\n\n- Reduce housing expenses by seeking cheaper accommodations or roommates.\n- Be mindful of your food expenses, look for deals and promotions at supermarkets.\n- Consider using budget management apps or tools to track your monthly expenses."
   }
   ```
 
-  Esempio di risposta (errore):
+  Example response (error):
   ```
   HTTP/1.1 500 Internal Server Error
   Content-Type: application/json
@@ -904,13 +906,13 @@ Il seguente endpoint API è disponibile per creare o aggiornare un rapporto dell
   }
   ```
 
-  **Note**:
-  - L'endpoint richiede l'autenticazione dell'utente tramite il token di accesso.
-  - L'anno e il mese del rapporto vengono specificati nel percorso dell'URL come `:yearmonth` nel formato "YYYY-MM" (ad esempio, "2023-05" per maggio 2023).
-  - La richiesta POST non richiede alcun dato nel corpo della richiesta. Le informazioni sulle spese dell'utente vengono recuperate internamente dal server.
-  - Il server genera automaticamente un prompt basato sulle spese dell'utente per il mese specificato.
-  - Il prompt viene inviato all'intelligenza artificiale per ottenere una risposta personalizzata basata sulle spese dell'utente.
-  - In caso di successo, viene restituita la risposta generata dall'intelligenza artificiale come campo "content" nell'oggetto JSON di risposta.
-  - In caso di errore durante la creazione o l'aggiornamento del rapporto, viene restituito un oggetto JSON di errore con un campo "error" che descrive l'errore specifico.
+  **Notes**:
+  - The endpoint requires user authentication via the access token.
+  - The report's year and month are specified in the URL path as `:yearmonth` in the "YYYY-MM" format (e.g., "2023-05" for May 2023).
+  - The POST request does not require any data in the request body. User expense information is internally retrieved by the server.
+  - The server automatically generates a prompt based on the user's expenses for the specified month.
+  - The prompt is sent to artificial intelligence to get a personalized response based on the user's expenses.
+  - In case of success, the response generated by artificial intelligence is returned as the "content" field in the JSON response object.
+  - In case of an error during the creation or update of the report, an error JSON object with an "error" field describing the specific error will be returned.
 
-*Ricorda di proteggere le informazioni dell'utente e di trattarle come dati sensibili. Assicurati di utilizzare connessioni sicure (HTTPS) per proteggere la trasmissione dei dati durante le richieste API.*
+*Remember to protect user information and treat it as sensitive data. Ensure secure connections (HTTPS) are used to protect data transmission during API requests.*
