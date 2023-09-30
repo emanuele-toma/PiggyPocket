@@ -1,85 +1,84 @@
 # PiggyPocket
 
-Benvenuto in PiggyPocket! PiggyPocket è un'applicazione di gestione finanziaria che ti aiuta a tenere traccia delle tue spese, a creare rapporti personalizzati e a gestire il tuo budget in modo efficace.
+Welcome to PiggyPocket! PiggyPocket is a financial management application that helps you track your expenses, create customized reports, and manage your budget effectively.
 
-## Descrizione del progetto
+## Project Description
 
-PiggyPocket ti permette di registrare le tue transazioni finanziarie, organizzarle per categoria, visualizzare statistiche e generare rapporti personalizzati. L'applicazione offre una panoramica completa delle tue finanze, consentendoti di prendere decisioni informate e di migliorare la tua situazione finanziaria.
+PiggyPocket allows you to record your financial transactions, organize them by category, view detailed statistics, and generate customized reports. The application provides a comprehensive overview of your finances, enabling you to make informed decisions and improve your financial situation.
 
-## Caratteristiche
+## Features
 
-- Registrazione delle transazioni finanziarie
-- Organizzazione delle transazioni per categoria
-- Statistiche dettagliate sulle spese e sui guadagni
-- Generazione di rapporti personalizzati
-- Gestione del budget mensile
-- Interfaccia utente intuitiva e facile da usare
+- Recording financial transactions
+- Organizing transactions by category
+- Detailed statistics on expenses and earnings
+- Generation of customized reports
+- Monthly budget management
+- Intuitive and user-friendly interface
 
-## Utilizzo
+## Usage
 
-Nella pagina principale /home si possono vedere dei grafici che rappresentano alcuni informazioni sulle transazioni eseguite.
-Per poter aggiungere nuove transazioni bisogna andare nella pagina transazioni.
+On the main page /home, you can view charts representing some information about the executed transactions. To add new transactions, you need to go to the transactions page.
 
-Nella pagina transazioni poi bisogna cliccare su "Aggiungi transazione" (Da mobile bisogna aprire il menu), inoltre si possono anche aggiungere dei filtri per poter filtrare le transazioni.
+On the transactions page, click on "Add Transaction" (On mobile, open the menu), and you can also add filters to filter transactions.
 
-Per modificare una transazione si può cliccare il pulsante apposta (da mobile bisogna cliccare sulla transazione)
+To edit a transaction, you can click the appropriate button (on mobile, click on the transaction).
 
-Stessa cosa per eliminare una transazione.
+The same goes for deleting a transaction.
 
-Nella pagina riepilogo mensile si può vedere un riepilogo mese per mese delle transazioni effettuate e, se configurato, cliccando su un riepilogo si può far generare un report tramite GPT che analizza le spese.
+On the monthly summary page, you can see a month-by-month summary of the transactions made, and if configured, by clicking on a summary, you can generate a report via GPT that analyzes the expenses.
 
-Nella pagina impostazioni si possono vedere i dati dell'utente, si possono esportare i dati in formato JSON, si possono aggiungere delle transazioni preimpostate e si può eliminare l'account.
+In the settings page, you can view user data, export data in JSON format, add predefined transactions, and delete the account.
 
-Inoltre nella pagina impostazioni si può generare un token per utilizzare l'api, il token può essere visualizzato solo una volta ma può essere rigenerato.
+Also, on the settings page, you can generate a token to use the API. The token can only be viewed once but can be regenerated.
 
-## Documentazione API
+## API Documentation
 
-La documentazione completa delle API di PiggyPocket è disponibile nel file [API.md](API.md). Questo file fornisce dettagli su tutti gli endpoint API disponibili, i parametri richiesti, le risposte attese e altre informazioni importanti per l'integrazione con l'applicazione.
+The complete documentation for PiggyPocket APIs is available in the [API.md](API.md) file. This file provides details on all available API endpoints, required parameters, expected responses, and other important information for integration with the application.
 
-**[Apri la documentazione delle API](API.md)**
+**[Open API Documentation](API.md)**
 
-## Configurazione del server GPT
+## GPT Server Configuration
 
-PiggyPocket richiede un server GPT (Generative Pre-trained Transformer) per l'elaborazione del linguaggio naturale al fine di generare i rapporti personalizzati. Prima di eseguire l'applicazione, è necessario configurare il server GPT in modo che risponda all'endpoint `POST /api/prompt` con un oggetto JSON che contiene una proprietà `response` corrispondente alla risposta generata da GPT.
+PiggyPocket requires a GPT (Generative Pre-trained Transformer) server for natural language processing to generate customized reports. Before running the application, it's necessary to configure the GPT server to respond to the `POST /api/prompt` endpoint with a JSON object containing a `response` property corresponding to the response generated by GPT.
 
-Ecco come configurare il server GPT per integrarlo con PiggyPocket:
+Here's how to configure the GPT server to integrate it with PiggyPocket:
 
-1. Installa il server GPT sul tuo ambiente locale o su un server remoto seguendo le istruzioni fornite dal fornitore o dal progetto GPT che stai utilizzando.
-2. Assicurati che il server GPT sia avviato correttamente e che sia raggiungibile tramite un endpoint API.
-3. Configura l'URL del server GPT nell'applicazione PiggyPocket modificando la variabile d'ambiente `GPT_SERVER` nel file `.env`.
+1. Install the GPT server in your local environment or on a remote server following the instructions provided by the provider or the GPT project you are using.
+2. Ensure that the GPT server is running correctly and is reachable via an API endpoint.
+3. Configure the GPT server URL in the PiggyPocket application by modifying the environment variable `GPT_SERVER` in the `.env` file.
 
    ```
-   GPT_SERVER=http://indirizzo_del_tuo_server_gpt
+   GPT_SERVER=http://your_gpt_server_address
    ```
 
-   Sostituisci `http://indirizzo_del_tuo_server_gpt` con l'URL effettivo del server GPT.
+   Replace `http://your_gpt_server_address` with the actual URL of the GPT server.
 
-4. Verifica che il server GPT risponda all'endpoint `POST /api/prompt` con un oggetto JSON che contiene una proprietà `response`. Questa proprietà rappresenterà la risposta generata da GPT basandosi sul prompt fornito.
+4. Verify that the GPT server responds to the `POST /api/prompt` endpoint with a JSON object containing a `response` property. This property will represent the response generated by GPT based on the provided prompt.
 
-   Esempio di risposta corretta del server GPT:
+   Example of a correct GPT server response:
 
    ```json
    {
-     "response": "La tua risposta generata da GPT."
+     "response": "Your response generated by GPT."
    }
    ```
 
-   Assicurati che il server GPT sia configurato correttamente per rispondere in questo formato.
+   Ensure that the GPT server is configured properly to respond in this format.
 
-Una volta configurato correttamente il server GPT e l'applicazione PiggyPocket con l'URL del server GPT, sarai in grado di generare rapporti personalizzati utilizzando l'intelligenza artificiale del server GPT.
+Once the GPT server and the PiggyPocket application are correctly configured with the GPT server URL, you will be able to generate customized reports using the artificial intelligence of the GPT server.
 
-Puoi trovare un esempio di server GPT funzionante nel file [GPT-SERVER.md](GPT-SERVER.md).
+You can find an example of a working GPT server in the [GPT-SERVER.md](GPT-SERVER.md) file.
 
-## Installazione
+## Installation
 
-Per installare PiggyPocket sul tuo ambiente locale, segui questi passaggi:
+To install PiggyPocket in your local environment, follow these steps:
 
-1. Clona il repository PiggyPocket da GitHub: `git clone https://github.com/tuonome/piggypocket.git`
-2. Accedi alla cartella del progetto: `cd piggypocket`
-3. Installa le dipendenze: `npm install`
-4. Configura le variabili d'ambiente:
-   - Crea un file `.env` nella cartella principale del progetto
-   - Aggiungi le seguenti variabili d'ambiente nel file `.env` e fornisci i valori appropriati:
+1. Clone the PiggyPocket repository from GitHub: `git clone https://github.com/yourname/piggypocket.git`
+2. Navigate to the project folder: `cd piggypocket`
+3. Install dependencies: `npm install`
+4. Configure environment variables:
+   - Create a `.env` file in the main project folder
+   - Add the following environment variables to the `.env` file and provide appropriate values:
      ```
      PORT=80
      GOOGLE_CLIENT_ID=abcd1234.apps.googleusercontent.com
@@ -87,13 +86,13 @@ Per installare PiggyPocket sul tuo ambiente locale, segui questi passaggi:
      SESSION_SECRET=abc123
      REDIRECT_HOST=http://example.com
      ```
-5. Avvia l'applicazione: `node .`
-6. L'applicazione sarà disponibile all'indirizzo `http://localhost:80`
+5. Start the application: `node .`
+6. The application will be available at `http://localhost:80`
 
 ## Demo
 
-https://piggypocket.tomaemanuele.it
+https://piggypocket.yourdomain.com
 
-## Licenza
+## License
 
-PiggyPocket è distribuito con la licenza AGPLv3. Per ulteriori informazioni, consulta il file [LICENSE](LICENSE).
+PiggyPocket is distributed under the AGPLv3 license. For more information, see the [LICENSE](LICENSE) file.
