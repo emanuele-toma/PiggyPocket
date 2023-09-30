@@ -39,10 +39,10 @@
                             <a class="nav-link" href="/home/">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active   " href="/home/transactions">Transazioni</a>
+                            <a class="nav-link active   " href="/home/transactions">Transactions</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/home/overview">Riepilogo mensile</a>
+                            <a class="nav-link" href="/home/overview">Monthly overview</a>
                         </li>
                     </ul>
                     <!-- Left links -->
@@ -63,7 +63,7 @@
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
                             <li>
                                 <a class="dropdown-item" href="/home/settings"><i
-                                        class="fas fa-gear me-2"></i>Impostazioni</a>
+                                        class="fas fa-gear me-2"></i>Settings</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="/logout"><i
@@ -86,7 +86,7 @@
                     <div class="input-group mb-3">
                         <div class="form-outline">
                             <input v-model="filters.search" id="txt-cerca" type="text" class="form-control">
-                            <label class="form-label" for="txt-cerca">Cerca transazione</label>
+                            <label class="form-label" for="txt-cerca">Find transaction</label>
                         </div>
                         <button id="btn-cerca" class="btn btn-primary" type="button">
                             <i class="fa-solid fa-magnifying-glass"></i>
@@ -103,17 +103,17 @@
                         <div class="col-12 col-md-3">
                             <button class="btn btn-link fw-bold" data-mdb-toggle="modal"
                                 data-mdb-target="#createModal"><i class="fa-solid fa-plus"></i>
-                                Aggiungi transazione</button>
+                                Add transaction</button>
                         </div>
                         <div class="col-12 col-md-3">
                             <div class="dropdown">
                                 <button class="btn btn-link fw-bold dropdown-toggle" type="button"
                                     id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
-                                    {{ filters.category || "Filtra per categoria" }}
+                                    {{ filters.category || "Filter by category" }}
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                     <li>
-                                        <a @click="filters.category = null" class="dropdown-item" href="#">Tutte</a>
+                                        <a @click="filters.category = null" class="dropdown-item" href="#">All</a>
                                     </li>
                                     <li v-for="category in categories">
                                         <a @click="filters.category = category" class="dropdown-item" href="#">{{
@@ -128,18 +128,18 @@
                                     id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
                                     <!-- Show the selected type or "Filter by type", if income show "Entrate" if expenditure show "Uscite" -->
                                     {{
-                                    (!filters.type) ? "Filtra per tipo" :
-                                    (filters.type == "income") ? "Entrate" :
-                                    (filters.type == "expenditure") ? "Uscite" :
-                                    "Filtra per tipo"
+                                    (!filters.type) ? "Filter by type" :
+                                    (filters.type == "income") ? "Income" :
+                                    (filters.type == "expenditure") ? "Expenses" :
+                                    "Filter by type"
                                     }}
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a @click="filters.type = null" class="dropdown-item" href="#">Tutte</a></li>
-                                    <li><a @click="filters.type = 'income'" class="dropdown-item" href="#">Entrate</a>
+                                    <li><a @click="filters.type = null" class="dropdown-item" href="#">All</a></li>
+                                    <li><a @click="filters.type = 'income'" class="dropdown-item" href="#">Income</a>
                                     </li>
                                     <li><a @click="filters.type = 'expenditure'" class="dropdown-item"
-                                            href="#">Uscite</a></li>
+                                            href="#">Expenses</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -148,22 +148,19 @@
                                 <button class="btn btn-link fw-bold dropdown-toggle" type="button"
                                     id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
                                     {{
-                                    (!filters.date_span) ? "Filtra per Data" :
-                                    (filters.date_span == "week") ? "Ultima settimana" :
-                                    (filters.date_span == "month") ? "Ultimo mese" :
-                                    (filters.date_span == "year") ? "Ultimo anno" :
-                                    "Filtra per Data"
+                                    (!filters.date_span) ? "Filter by date" :
+                                    (filters.date_span == "week") ? "Last week" :
+                                    (filters.date_span == "month") ? "Last month" :
+                                    (filters.date_span == "year") ? "Last year" :
+                                    "Filter by date"
                                     }}
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a @click="filters.date_span = null" class="dropdown-item" href="#">Tutto</a>
+                                    <li><a @click="filters.date_span = null" class="dropdown-item" href="#">All</a>
                                     </li>
-                                    <li><a @click="filters.date_span = 'week'" class="dropdown-item" href="#">Ultima
-                                            settimana</a></li>
-                                    <li><a @click="filters.date_span = 'month'" class="dropdown-item" href="#">Ultimo
-                                            mese</a></li>
-                                    <li><a @click="filters.date_span = 'year'" class="dropdown-item" href="#">Ultimo
-                                            anno</a></li>
+                                    <li><a @click="filters.date_span = 'week'" class="dropdown-item" href="#">Last week</a></li>
+                                    <li><a @click="filters.date_span = 'month'" class="dropdown-item" href="#">Last month</a></li>
+                                    <li><a @click="filters.date_span = 'year'" class="dropdown-item" href="#">Last year</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -175,11 +172,11 @@
                     <!-- Contains this headers date, amount, description, category, payee but translated to italian -->
                     <thead>
                         <tr>
-                            <th scope="col"><b>Transazione</b></th>
-                            <th scope="col"><b>Descrizione</b></th>
-                            <th scope="col"><b>Importo</b></th>
-                            <th scope="col"><b>Data</b></th>
-                            <th scope="col text-center"><b>Azioni</b></th>
+                            <th scope="col"><b>Transaction</b></th>
+                            <th scope="col"><b>Description</b></th>
+                            <th scope="col"><b>Amount</b></th>
+                            <th scope="col"><b>Date</b></th>
+                            <th scope="col text-center"><b>Actions</b></th>
                         </tr>
                     </thead>
                     <!-- Contains the transactions -->
@@ -210,7 +207,7 @@
                                 <b>+ {{ Math.abs(transaction.amount).toFixed(2) }} €</b>
                             </td>
                             <td class="align-middle">
-                                {{ new Date(transaction.date).toLocaleString([], {dateStyle: 'medium', timeStyle:
+                                {{ new Date(transaction.date).toLocaleString('en', {dateStyle: 'medium', timeStyle:
                                 'short'}) }}
                             </td>
                             <!-- Add modify and delete buttons -->
@@ -227,7 +224,7 @@
                         </tr>
                         <!-- vue if no transaction one single row -->
                         <tr v-if="transactions.length == 0">
-                            <td colspan="5" class="text-center">Non ci sono transazioni da mostrare :(</td>
+                            <td colspan="5" class="text-center">There are no transactiosn to show :(</td>
                         </tr>
                         <!-- Add pagination -->
                         <tr>
@@ -238,7 +235,7 @@
                                         :disabled="!(currentPage > 1)" @click="currentPage--">
                                         <i class="fa-solid fa-chevron-left"></i>
                                     </button>
-                                    <input type="number" class="form-control rounded-0 text-center" placeholder="Pagina"
+                                    <input type="number" class="form-control rounded-0 text-center" placeholder="Page"
                                         v-model="currentPage" min="1" :max="totalPages">
                                     <button id="pagination-2" type="button" class="btn btn-primary"
                                         :disabled="currentPage >= totalPages" @click="currentPage++">
@@ -259,7 +256,7 @@
                 <div class="row">
                     <div class="col-12">
                         <button class="btn btn-link fw-bold" data-mdb-toggle="collapse" data-mdb-target="#collapse-menu">
-                            Azioni
+                            Actions
                             <i class="fa-solid fa-caret-down"></i>
                         </button>
                     </div>
@@ -269,18 +266,18 @@
                         <div class="col-12 col-md-3">
                             <button class="btn btn-link fw-bold" data-mdb-toggle="modal"
                                 data-mdb-target="#createModal"><i class="fa-solid fa-plus"></i>
-                                Aggiungi transazione
+                                Add transaction
                             </button>
                         </div>
                         <div class="col-12 col-md-3">
                             <div class="dropdown">
                                 <button class="btn btn-link fw-bold dropdown-toggle" type="button"
                                     id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
-                                    {{ filters.category || "Filtra per categoria" }}
+                                    {{ filters.category || "Filter by category" }}
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                     <li>
-                                        <a @click="filters.category = null" class="dropdown-item" href="#">Tutte</a>
+                                        <a @click="filters.category = null" class="dropdown-item" href="#">All</a>
                                     </li>
                                     <li v-for="category in categories">
                                         <a @click="filters.category = category" class="dropdown-item" href="#">{{
@@ -295,18 +292,18 @@
                                     id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
                                     <!-- Show the selected type or "Filter by type", if income show "Entrate" if expenditure show "Uscite" -->
                                     {{
-                                    (!filters.type) ? "Filtra per tipo" :
-                                    (filters.type == "income") ? "Entrate" :
-                                    (filters.type == "expenditure") ? "Uscite" :
-                                    "Filtra per tipo"
+                                    (!filters.type) ? "Filter by type" :
+                                    (filters.type == "income") ? "Income" :
+                                    (filters.type == "expenditure") ? "Expenses" :
+                                    "Filter by type"
                                     }}
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a @click="filters.type = null" class="dropdown-item" href="#">Tutte</a></li>
-                                    <li><a @click="filters.type = 'income'" class="dropdown-item" href="#">Entrate</a>
+                                    <li><a @click="filters.type = null" class="dropdown-item" href="#">All</a></li>
+                                    <li><a @click="filters.type = 'income'" class="dropdown-item" href="#">Income</a>
                                     </li>
                                     <li><a @click="filters.type = 'expenditure'" class="dropdown-item"
-                                            href="#">Uscite</a></li>
+                                            href="#">Expenses</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -315,22 +312,19 @@
                                 <button class="btn btn-link fw-bold dropdown-toggle" type="button"
                                     id="dropdownMenuButton1" data-mdb-toggle="dropdown" aria-expanded="false">
                                     {{
-                                    (!filters.date_span) ? "Filtra per Data" :
-                                    (filters.date_span == "week") ? "Ultima settimana" :
-                                    (filters.date_span == "month") ? "Ultimo mese" :
-                                    (filters.date_span == "year") ? "Ultimo anno" :
-                                    "Filtra per Data"
+                                    (!filters.date_span) ? "Filter by date" :
+                                    (filters.date_span == "week") ? "Last week" :
+                                    (filters.date_span == "month") ? "Last month" :
+                                    (filters.date_span == "year") ? "Last year" :
+                                    "Filter by date"
                                     }}
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a @click="filters.date_span = null" class="dropdown-item" href="#">Tutto</a>
+                                    <li><a @click="filters.date_span = null" class="dropdown-item" href="#">All</a>
                                     </li>
-                                    <li><a @click="filters.date_span = 'week'" class="dropdown-item" href="#">Ultima
-                                            settimana</a></li>
-                                    <li><a @click="filters.date_span = 'month'" class="dropdown-item" href="#">Ultimo
-                                            mese</a></li>
-                                    <li><a @click="filters.date_span = 'year'" class="dropdown-item" href="#">Ultimo
-                                            anno</a></li>
+                                    <li><a @click="filters.date_span = 'week'" class="dropdown-item" href="#">Last week</a></li>
+                                    <li><a @click="filters.date_span = 'month'" class="dropdown-item" href="#">Last month</a></li>
+                                    <li><a @click="filters.date_span = 'year'" class="dropdown-item" href="#">Last year</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -361,7 +355,7 @@
                                         + {{ transaction.amount.toFixed(2) }} €
                                     </p>
                                     <p class="text-muted mb-0">
-                                        {{ new Date(transaction.date).toLocaleString([], {dateStyle: 'medium'}) }}
+                                        {{ new Date(transaction.date).toLocaleString('en', {dateStyle: 'medium'}) }}
                                     </p>
                                 </div>
                             </div>
@@ -371,7 +365,7 @@
 
                 <div v-if="transactions.length == 0" class="card shadow-4-strong">
                     <div class="card-body">
-                        <h5 class="card-title">Non ci sono transazioni da mostrare :(</h5>
+                        <h5 class="card-title">There are no transactions to show :(</h5>
                     </div>
                 </div>
 
@@ -380,7 +374,7 @@
                         @click="currentPage--">
                         <i class="fa-solid fa-chevron-left"></i>
                     </button>
-                    <input type="number" class="form-control rounded-0 text-center" placeholder="Pagina"
+                    <input type="number" class="form-control rounded-0 text-center" placeholder="Page"
                         v-model="currentPage" min="1" :max="totalPages">
                     <button id="pagination-2" type="button" class="btn btn-primary"
                         :disabled="currentPage >= totalPages" @click="currentPage++">
@@ -400,8 +394,8 @@
                         <div class="modal-header">
                             <h5 class="modal-title" id="createModalLabel">
                                 <img class="me-2" src="/assets/favicon.png" height="30" alt="Logo" loading="lazy" /> 
-                                <span class="d-none d-lg-inline">Inserisci una nuova transazione</span>
-                                <span class="d-inline d-lg-none">Inserisci transazione</span>
+                                <span class="d-none d-lg-inline">Add new transaction</span>
+                                <span class="d-inline d-lg-none">Add transaction</span>
                             </h5>
                             <button type="button" class="btn-close" data-mdb-dismiss="modal"
                                 aria-label="Close"></button>
@@ -411,7 +405,7 @@
                             <div class="input-group mb-3">
                                 <span class="input-group-text"><i class="fa-solid fa-building"></i></span>
                                 <input id="create_payer" type="text" class="form-control rounded-end"
-                                    placeholder="Beneficiario / Mittente" list="dl-beneficiari" />
+                                    placeholder="Payee / Payer" list="dl-beneficiari" />
                                 <datalist id="dl-beneficiari">
                                     <!-- Using vue load payees -->
                                     <option v-for="payee in payees" :value="payee">
@@ -423,7 +417,7 @@
                             <div class="input-group mb-3">
                                 <span class="input-group-text"><i class="fa-solid fa-tag"></i></span>
                                 <input id="create_category" type="text" class="form-control rounded-end"
-                                    placeholder="Categoria" list="dl-categorie" />
+                                    placeholder="Category" list="dl-categorie" />
                                 <datalist id="dl-categorie">
                                     <!-- Using vue load categories -->
                                     <option v-for="category in categories" :value="category">
@@ -435,7 +429,7 @@
                             <div class="input-group mb-3">
                                 <span class="input-group-text"><i class="fa-solid fa-comment"></i></span>
                                 <textarea id="create_description" class="form-control rounded-end"
-                                    placeholder="Descrizione" style="resize: none"></textarea>
+                                    placeholder="Description" style="resize: none"></textarea>
                             </div>
 
                             <div class="input-group mb-3">
@@ -447,22 +441,22 @@
                                 </span>
                                 <input id="create_amount" type="number" min="0" step="0.01"
                                     class="form-control rounded-end"
-                                    placeholder="Importo, usa pulsante per cambiare il segno" />
+                                    placeholder="Amount, use button to change positive/negative amount" />
                             </div>
 
                             <!-- Date picker -->
                             <div class="input-group mb-3">
                                 <span class="input-group-text"><i class="fa-solid fa-calendar"></i></span>
                                 <input id="create_date" type="datetime-local" class="form-control rounded-end"
-                                    placeholder="Data" onfocus="this.showPicker()" />
+                                    placeholder="Date" onfocus="this.showPicker()" />
                             </div>
 
                         </div>
                         <div class="modal-footer d-flex justify-content-between">
                             <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
-                                Annulla
+                                Cancel
                             </button>
-                            <button @click="createTransaction" type="button" class="btn btn-primary">Inserisci</button>
+                            <button @click="createTransaction" type="button" class="btn btn-primary">Add</button>
                         </div>
                     </div>
                 </div>
@@ -479,7 +473,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="updateModalLabel"><img class="me-2" src="/assets/favicon.png"
-                                height="30" alt="Logo" loading="lazy" /> Modifica transazione</h5>
+                                height="30" alt="Logo" loading="lazy" /> Edit transaction</h5>
                         <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -487,7 +481,7 @@
                         <div class="input-group mb-3">
                             <span class="input-group-text"><i class="fa-solid fa-building"></i></span>
                             <input v-model="update.payee" id="update_payer" type="text" class="form-control rounded-end"
-                                placeholder="Beneficiario / Mittente" list="dl-beneficiari" />
+                                placeholder="Payee / Payer" list="dl-beneficiari" />
                             <datalist id="dl-beneficiari">
                                 <!-- Using vue load payees -->
                                 <option v-for="payee in payees" :value="payee">
@@ -499,7 +493,7 @@
                         <div class="input-group mb-3">
                             <span class="input-group-text"><i class="fa-solid fa-tag"></i></span>
                             <input v-model="update.category" id="update_category" type="text"
-                                class="form-control rounded-end" placeholder="Categoria" list="dl-categorie" />
+                                class="form-control rounded-end" placeholder="Category" list="dl-categorie" />
                             <datalist id="dl-categorie">
                                 <!-- Using vue load categories -->
                                 <option v-for="category in categories" :value="category">
@@ -511,7 +505,7 @@
                         <div class="input-group mb-3">
                             <span class="input-group-text"><i class="fa-solid fa-comment"></i></span>
                             <textarea v-model="update.description" id="update_description"
-                                class="form-control rounded-end" placeholder="Descrizione"
+                                class="form-control rounded-end" placeholder="Description"
                                 style="resize: none"></textarea>
                         </div>
 
@@ -524,24 +518,24 @@
                             </span>
                             <input v-model="update.amount" id="update_amount" type="number" min="0" step="0.01"
                                 class="form-control rounded-end"
-                                placeholder="Importo, usa pulsante per cambiare il segno" />
+                                placeholder="Amount, use button to change positive/negative amount" />
                         </div>
 
                         <!-- Date picker -->
                         <div class="input-group mb-3">
                             <span class="input-group-text"><i class="fa-solid fa-calendar"></i></span>
                             <input v-model="update.date" id="update_date" type="datetime-local"
-                                class="form-control rounded-end" placeholder="Data" onfocus="this.showPicker()" />
+                                class="form-control rounded-end" placeholder="Date" onfocus="this.showPicker()" />
                         </div>
 
                     </div>
                     <div class="modal-footer d-flex justify-content-between">
                         <button type="button" class="btn btn-secondary d-none d-lg-block" data-mdb-dismiss="modal">
-                            Annulla
+                            Cancel
                         </button>
-                        <button @click="openDelete(update)" type="button" class="btn btn-danger me-2 d-lg-none">Elimina</button>
+                        <button @click="openDelete(update)" type="button" class="btn btn-danger me-2 d-lg-none">Delete</button>
                         <div>
-                            <button @click="updateTransaction" type="button" class="btn btn-primary">Modifica</button>
+                            <button @click="updateTransaction" type="button" class="btn btn-primary">Modify</button>
                         </div>
                     </div>
                 </div>
@@ -558,19 +552,19 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="deleteModalLabel"><img class="me-2" src="/assets/favicon.png"
-                                height="30" alt="Logo" loading="lazy" /> Elimina transazione</h5>
+                                height="30" alt="Logo" loading="lazy" /> Delete transaction</h5>
                         <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <!-- Add message -->
-                        <h5>Sei sicuro di voler eliminare questa transazione?</h5>
+                        <h5>Are you sure you want to delete this transaction?</h5>
                     </div>
                     <div class="modal-footer d-flex justify-content-between">
                         <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
-                            Annulla
+                            Cancel
                         </button>
                         <div>
-                            <button @click="deleteTransaction" type="button" class="btn btn-primary">Elimina</button>
+                            <button @click="deleteTransaction" type="button" class="btn btn-primary">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -735,32 +729,32 @@
                     let toast = new mdb.Toast(document.getElementById('liveToast'));
 
                     if (payee.trim().length < 1) {
-                        this.toast.title = "Errore";
-                        this.toast.message = "Il nome del beneficiario è obbligatorio";
+                        this.toast.title = "Error";
+                        this.toast.message = "The name of the payee/payer is required";
                         this.toast.classes = ['me-auto', 'text-danger'];
                         toast.show();
                         return;
                     }
 
                     if (category.trim().length < 1) {
-                        this.toast.title = "Errore";
-                        this.toast.message = "La categoria è obbligatoria";
+                        this.toast.title = "Error";
+                        this.toast.message = "The category is required";
                         this.toast.classes = ['me-auto', 'text-danger'];
                         toast.show();
                         return;
                     }
 
                     if (amount.trim().length < 1 || amount <= 0 || isNaN(amount)) {
-                        this.toast.title = "Errore";
-                        this.toast.message = "L'importo deve essere maggiore di zero";
+                        this.toast.title = "Error";
+                        this.toast.message = "The amount must be greater than zero";
                         this.toast.classes = ['me-auto', 'text-danger'];
                         toast.show();
                         return;
                     }
 
                     if (date.trim().length < 1 || isNaN(Date.parse(date))) {
-                        this.toast.title = "Errore";
-                        this.toast.message = "La data è obbligatoria";
+                        this.toast.title = "Error";
+                        this.toast.message = "The date is required";
                         this.toast.classes = ['me-auto', 'text-danger'];
                         toast.show();
                         return;
@@ -786,8 +780,8 @@
                         .then(response => response.json())
                         .then(data => {
                             if (!data.error) {
-                                this.toast.title = "Successo";
-                                this.toast.message = "Transazione inserita con successo";
+                                this.toast.title = "Success";
+                                this.toast.message = "Transaction added successfully";
                                 this.toast.classes = ['me-auto', 'text-success'];
                                 toast.show();
                                 // reset modal
@@ -805,7 +799,7 @@
                                 this.fetchTransactions();
                             }
                             else {
-                                this.toast.title = "Errore";
+                                this.toast.title = "Error";
                                 this.toast.message = data.error;
                                 this.toast.classes = ['me-auto', 'text-danger'];
                                 toast.show();
@@ -823,32 +817,32 @@
                     let toast = new mdb.Toast(document.getElementById('liveToast'));
 
                     if (payee.trim().length < 1) {
-                        this.toast.title = "Errore";
-                        this.toast.message = "Il nome del beneficiario è obbligatorio";
+                        this.toast.title = "Error";
+                        this.toast.message = "The name of the payee/payer is required";
                         this.toast.classes = ['me-auto', 'text-danger'];
                         toast.show();
                         return;
                     }
 
                     if (category.trim().length < 1) {
-                        this.toast.title = "Errore";
-                        this.toast.message = "La categoria è obbligatoria";
+                        this.toast.title = "Error";
+                        this.toast.message = "The category is required";
                         this.toast.classes = ['me-auto', 'text-danger'];
                         toast.show();
                         return;
                     }
 
                     if (amount.trim().length < 1 || amount <= 0 || isNaN(amount)) {
-                        this.toast.title = "Errore";
-                        this.toast.message = "L'importo deve essere maggiore di zero";
+                        this.toast.title = "Error";
+                        this.toast.message = "The amount must be greater than zero";
                         this.toast.classes = ['me-auto', 'text-danger'];
                         toast.show();
                         return;
                     }
 
                     if (date.trim().length < 1 || isNaN(Date.parse(date))) {
-                        this.toast.title = "Errore";
-                        this.toast.message = "La data è obbligatoria";
+                        this.toast.title = "Error";
+                        this.toast.message = "The date is required";
                         this.toast.classes = ['me-auto', 'text-danger'];
                         toast.show();
                         return;
@@ -874,8 +868,8 @@
                         .then(response => response.json())
                         .then(data => {
                             if (!data.error) {
-                                this.toast.title = "Successo";
-                                this.toast.message = "Transazione aggiornata con successo";
+                                this.toast.title = "Success";
+                                this.toast.message = "Transaction updated successfully";
                                 this.toast.classes = ['me-auto', 'text-success'];
                                 toast.show();
                                 // reset modal
@@ -893,7 +887,7 @@
                                 this.fetchTransactions();
                             }
                             else {
-                                this.toast.title = "Errore";
+                                this.toast.title = "Error";
                                 this.toast.message = data.error;
                                 this.toast.classes = ['me-auto', 'text-danger'];
                                 toast.show();
@@ -911,8 +905,8 @@
                         .then(response => response.json())
                         .then(data => {
                             if (!data.error) {
-                                this.toast.title = "Successo";
-                                this.toast.message = "Transazione eliminata con successo";
+                                this.toast.title = "Success";
+                                this.toast.message = "Transaction deleted successfully";
                                 this.toast.classes = ['me-auto', 'text-success'];
                                 toast.show();
 
@@ -923,7 +917,7 @@
                                 this.fetchTransactions();
                             }
                             else {
-                                this.toast.title = "Errore";
+                                this.toast.title = "Error";
                                 this.toast.message = data.error;
                                 this.toast.classes = ['me-auto', 'text-danger'];
                                 toast.show();

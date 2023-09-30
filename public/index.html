@@ -13,14 +13,14 @@
     <div class="h-100 d-flex align-items-center justify-content-center">
         <div class="text-center">
             <h1 class="mb-5"><img class="me-3 pb-2 py-1" src="/assets/favicon.png" height="60"><span style="color: rgb(70, 0, 0);">PiggyPocket</span></h1>
-            <a class="btn btn-primary fs-5 py-3 d-flex align-items-center" href="/auth/google"><i class="fa-brands fa-google me-3"></i> Accedi con Google</a>
-            <a class="btn btn-dark fs-5 py-3 d-flex align-items-center mt-4" id="btn-token"><i class="fa fa-key me-3"></i> Accedi con Token</a>
+            <a class="btn btn-primary fs-5 py-3 d-flex align-items-center" href="/auth/google"><i class="fa-brands fa-google me-3"></i> Log in with Google</a>
+            <a class="btn btn-dark fs-5 py-3 d-flex align-items-center mt-4" id="btn-token"><i class="fa fa-key me-3"></i> Log in with Token</a>
         </div>
     </div>
 
     <script>
         document.getElementById('btn-token').addEventListener('click', function() {
-            var token = prompt('Inserisci il tuo token di accesso');
+            var token = prompt('Insert your access token');
             if (token) {
                 fetch('/auth/token', {
                     method: 'POST',
@@ -34,7 +34,7 @@
                     if (response.ok) {
                         window.location.href = '/home';
                     } else {
-                        alert('Token non valido');
+                        alert('Invalid token');
                     }
                 });
             }

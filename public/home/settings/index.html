@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -69,10 +69,10 @@
                             <a class="nav-link" href="/home/">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/home/transactions">Transazioni</a>
+                            <a class="nav-link" href="/home/transactions">Transactions</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/home/overview">Riepilogo mensile</a>
+                            <a class="nav-link" href="/home/overview">Monthly overview</a>
                         </li>
                     </ul>
                     <!-- Left links -->
@@ -95,7 +95,7 @@
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
                             <li>
                                 <a class="dropdown-item" href="/home/settings"><i
-                                        class="fas fa-gear me-2"></i>Impostazioni</a>
+                                        class="fas fa-gear me-2"></i>Settings</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="/logout"><i
@@ -135,16 +135,15 @@
                                 <button class="accordion-button collapsed p-0" type="button" data-mdb-toggle="collapse"
                                     data-mdb-target="#flush-collapseOne" aria-expanded="false"
                                     aria-controls="flush-collapseOne">
-                                    <div class="fs-5">Impostazioni utente</div>
+                                    <div class="fs-5">User settings</div>
                                 </button>
                             </h2>
                             <div id="flush-collapseOne" class="accordion-collapse collapse"
                                 aria-labelledby="flush-headingOne" data-mdb-parent="#accordionFlushExample">
                                 <div class="accordion-body lh-lg">
-                                    I dettagli dell'account come Nome, Cognome, Email e Immagine del profilo vengono
-                                    automaticamente aggiornati ogni volta che si accede al sito.<br>
-                                    Per modificare i dati dell'account, è necessario modificare i dati del proprio
-                                    account Google.
+                                    Account details such as First Name, Last Name, Email and Profile Picture are
+                                    automatically updated every time you access the site.<br>
+                                    To change your account details, you must change your Google account details.
                                 </div>
                             </div>
                         </div>
@@ -153,7 +152,7 @@
                     <!-- Input for name, email and token -->
                     <div class="row mb-3">
                         <div class="col-md-6 col-12">
-                            <label for="name" class="form-label">Nome</label>
+                            <label for="name" class="form-label">Name</label>
                             <input type="text" class="form-control" id="name" v-model="user.name" readonly>
                         </div>
                         <div class="col-md-6 col-12 mt-md-0 mt-3">
@@ -169,28 +168,27 @@
                                 <button class="accordion-button collapsed p-0" type="button" data-mdb-toggle="collapse"
                                     data-mdb-target="#flush-collapseTwo" aria-expanded="false"
                                     aria-controls="flush-collapseTwo">
-                                    <div class="fs-5">Token API</div>
+                                    <div class="fs-5">API Token</div>
                                 </button>
                             </h2>
                             <div id="flush-collapseTwo" class="accordion-collapse collapse"
                                 aria-labelledby="flush-headingTwo" data-mdb-parent="#accordionFlushExample">
                                 <div class="accordion-body lh-lg">
-                                    Il token API è un codice alfanumerico che permette di accedere ai dati del proprio
-                                    account da applicazioni esterne.<br>
-                                    Il token API è univoco per ogni account e non può essere modificato.<br>
-                                    Per motivi di sicurezza, il token API si può leggere solo una volta.<br>
-                                    <strong>Attenzione:</strong> Rigenerando il token API, tutte le applicazioni
-                                    esterne che utilizzano il vecchio token non potranno più accedere ai dati del
-                                    proprio account.
+                                    The API token is an alphanumeric code that allows you to access your data
+                                    accounts from external applications.<br>
+                                    The API token is unique for each account and cannot be changed.<br>
+                                    For security reasons, the API token can only be read once.<br>
+                                    <strong>Attention:</strong> By regenerating the API token, all external applications
+                                    that use the old token will no longer be able to access the data
+                                    of the account.
                                     <div class="alert alert-warning mt-3" role="alert">
-                                        <i class="fas fa-exclamation-triangle me-2"></i>Non condividere il token API
-                                        con nessuno.
+                                        <i class="fas fa-exclamation-triangle me-2"></i>Do not share your API token with anyone.
                                     </div>
                                     <!-- Info alert that links to https://github.com/emanuele-toma/PiggyPocket/blob/main/API.md -->
                                     <div class="alert alert-info mt-3" role="alert">
-                                        <i class="fas fa-info-circle me-2"></i>Per maggiori informazioni sull'utilizzo
-                                        del token API, consulta la 
-                                        <a href="https://github.com/emanuele-toma/PiggyPocket/blob/main/API.md" target="_blank">documentazione API</a>.
+                                        <i class="fas fa-info-circle me-2"></i>For more information on usage
+                                         of the API token, see the
+                                        <a href="https://github.com/emanuele-toma/PiggyPocket/blob/main/API.md" target="_blank">API documentation</a>.
                                     </div>
 
 
@@ -202,11 +200,11 @@
                     <!-- Input field with button to re-generate API token -->
                     <div class="row mb-3">
                         <div class="col-12">
-                            <label for="token" class="form-label">Token API</label>
+                            <label for="token" class="form-label">API Token</label>
                             <div class="input-group">
                                 <input :type="apiToken ? 'text' : 'password'" class="form-control" id="token" v-model="apiToken" :value="apiToken ? apiToken : 'xxxxxxxxxxxxxxxxxxx'" readonly>
                                 <button @click="newToken" class="btn btn-outline-primary" type="button" id="button-addon2">
-                                    <span class="d-md-block d-none">Genera nuovo token</span>
+                                    <span class="d-md-block d-none">Generate new token</span>
                                     <i class="fas fa-sync-alt d-md-none"></i>
                                 </button>
                             </div>
@@ -219,19 +217,18 @@
                             <h2 class="accordion-header" id="flush-headingThree">
                                 <button class="accordion-button collapsed p-0" type="button" data-mdb-toggle="collapse"
                                     data-mdb-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
-                                    <div class="fs-5">Impostazioni account</div>
+                                    <div class="fs-5">Account settings</div>
                                 </button>
                             </h2>
                             <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree"
                                 data-mdb-parent="#accordionFlushExample">
                                 <div class="accordion-body lh-lg">
-                                    <strong>Attenzione:</strong> Eliminando l'account, tutti i dati relativi all'account
-                                    verranno cancellati e non sarà più possibile recuperarli.<br>
-                                    <strong>Attenzione:</strong> Eliminando l'account, tutte le applicazioni esterne
-                                    che utilizzano il token API non potranno più accedere ai dati del proprio account.
+                                    <strong>Attention:</strong> By deleting the account, all data relating to the account
+                                     will be deleted and it will no longer be possible to recover it.<br>
+                                     <strong>Attention:</strong> By deleting the account, all external applications
+                                     who use the API token will no longer be able to access the account data.
                                     <div class="alert alert-warning mt-3" role="alert">
-                                        <i class="fas fa-exclamation-triangle me-2"></i>Non è possibile annullare
-                                        l'eliminazione dell'account.
+                                        <i class="fas fa-exclamation-triangle me-2"></i>It's not possible to recover the account after deletion.
                                     </div>
                                 </div>
                             </div>
@@ -241,26 +238,26 @@
                     <div class="d-none d-md-flex justify-content-between">
                         <!-- Export data and delete account -->
                         <button @click="fetchData" type="button" class="btn btn-outline-primary">
-                            <i class="fas fa-file-export me-2"></i>Esporta dati
+                            <i class="fas fa-file-export me-2"></i>Export data
                         </button>
                         <button @click="randomData" type="button" class="btn btn-outline-warning">
-                            <i class="fas fa-shuffle me-2"></i>Genera transazioni casuali
+                            <i class="fas fa-shuffle me-2"></i>Generate random transactions
                         </button>
                         <button @click="openDelete" type="button" class="btn btn-outline-danger">
-                            <i class="fas fa-trash me-2"></i>Elimina account
+                            <i class="fas fa-trash me-2"></i>Delete account
                         </button>
                     </div>
 
                     <div class="d-flex d-md-none flex-column">
                         <!-- Export data and delete account -->
                         <button @click="fetchData" type="button" class="btn btn-outline-primary w-100 mb-3">
-                            <i class="fas fa-file-export me-2"></i>Esporta dati
+                            <i class="fas fa-file-export me-2"></i>Export data
                         </button>
                         <button @click="randomData" type="button" class="btn btn-outline-warning w-100 mb-3">
-                            <i class="fas fa-shuffle me-2"></i>Genera transazioni casuali
+                            <i class="fas fa-shuffle me-2"></i>Generate random transactions
                         </button>
                         <button @click="openDelete" type="button" class="btn btn-outline-danger w-100">
-                            <i class="fas fa-trash me-2"></i>Elimina account
+                            <i class="fas fa-trash me-2"></i>Delete account
                         </button>
                     </div>
                 </div>
@@ -273,19 +270,19 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="deleteModalLabel"><img class="me-2" src="/assets/favicon.png" height="30"
-                                alt="Logo" loading="lazy" /> Elimina account</h5>
+                                alt="Logo" loading="lazy" /> Delete account</h5>
                         <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <!-- Add message -->
-                        <h5>Sei sicuro di voler eliminare il tuo account?</h5>
+                        <h5>Are you sure you want to delete your account?</h5>
                     </div>
                     <div class="modal-footer d-flex justify-content-between">
                         <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">
-                            Annulla
+                            Cancel
                         </button>
                         <div>
-                            <button @click="deleteAccount" type="button" class="btn btn-primary">Elimina</button>
+                            <button @click="deleteAccount" type="button" class="btn btn-primary">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -367,8 +364,8 @@
 
 
                             // show success toast
-                            this.toast.title = "Esportazione completata";
-                            this.toast.message = "I dati sono stati esportati con successo.";
+                            this.toast.title = "Exportation completed";
+                            this.toast.message = "Data exported successfully.";
                             this.toast.classes = ['me-auto', 'text-success'];
                             const toast = new mdb.Toast(document.getElementById('liveToast'));
                             toast.show();
@@ -380,8 +377,8 @@
                     }).then(response => {
                         if (response.status == 200) {
                             // show success toast
-                            this.toast.title = "Account eliminato";
-                            this.toast.message = "L'account è stato eliminato con successo.";
+                            this.toast.title = "Account deleted";
+                            this.toast.message = "Your account has been deleted succesfully.";
                             this.toast.classes = ['me-auto', 'text-success'];
                             const toast = new mdb.Toast(document.getElementById('liveToast'));
                             toast.show();
@@ -405,16 +402,16 @@
                             // if error
                             if (data.error)
                             {
-                                this.toast.title = "Errore";
-                                this.toast.message = "I dati casuali sono già stati generati. Eliminali tutti per poterli rigenerare."
+                                this.toast.title = "Error";
+                                this.toast.message = "Random data has already been generated. Delete all data to generate new random data.";
                                 this.toast.classes = ['me-auto', 'text-danger'];
                                 const toast = new mdb.Toast(document.getElementById('liveToast'));
                                 toast.show();
                                 return;
                             }
 
-                            this.toast.title = "Dati generati";
-                            this.toast.message = "I dati sono stati generati con successo.";
+                            this.toast.title = "Data generated";
+                            this.toast.message = "Data generated successfully.";
                             this.toast.classes = ['me-auto', 'text-success'];
                             const toast = new mdb.Toast(document.getElementById('liveToast'));
                             toast.show();
