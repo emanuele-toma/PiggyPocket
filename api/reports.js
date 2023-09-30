@@ -22,7 +22,7 @@ router.get('/reports/@me/:yearmonth', async (req, res) => {
 
     try {
         const report = await db.get(query, userId, year, month);
-        res.json(report || { content: '' });
+        res.json(report || { content: '' });    
     } catch (error) {
         res.status(500).json({ error: 'Error retrieving report data' });
     }
